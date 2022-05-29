@@ -1,2 +1,2 @@
 # server
-겸상 - Back End
+겸상 - Back End / Infra
