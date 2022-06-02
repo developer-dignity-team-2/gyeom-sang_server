@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+mysql/.env.test
+mysql/.env.prod
+nodemailer/.env.test
+nodemailer/.env.prod
