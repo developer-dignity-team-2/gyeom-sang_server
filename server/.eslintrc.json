@@ -1,0 +1,22 @@
+{
+  "extends": ["airbnb", "prettier", "plugin:node/recommended", "plugin:prettier/recommended"],
+
+  "rules": {
+    "arrow-body-style": "off",
+    // "max-lines": ["warn", 150],
+    "no-param-reassign": ["error", { "props": false }],
+    "no-use-before-define": "off",
+    "no-shadow": "off",
+    "no-unused-expressions": ["warn"],
+    "prefer-const": ["warn"],
+    "prefer-destructuring": ["error", { "object": true, "array": false }],
+    "lines-between-class-members": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never"
+      }
+    ]
+  }
+}
