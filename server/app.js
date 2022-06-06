@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+
 const app = express();
 const fs = require('fs');
 const morgan = require('morgan');
@@ -21,7 +22,7 @@ app.use(
   })
 ); // 클라이언트 요청 body를 json으로 파싱 처리
 
-let sess = {
+const sess = {
   secret: 'secret key',
   resave: false, // 세션에 변경사항이 없어도 항상 다시 저장할지 여부
   saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 강제로 저장할지 여부
@@ -44,8 +45,7 @@ app.use(cors(corsOptions));
 const generator = (time, index) => {
   if (!time) return 'file.log';
 
-  const yearmonth =
-    time.getFullYear() + (time.getMonth() + 1).toString().padStart(2, '0');
+  const yearmonth = time.getFullYear() + (time.getMonth() + 1).toString().padStart(2, '0');
   const day = time.getDate().toString().padStart(2, '0');
   const hour = time.getHours().toString().padStart(2, '0');
   const minute = time.getMinutes().toString().padStart(2, '0');
@@ -62,17 +62,17 @@ const accessLogStream = rfs.createStream(generator, {
 app.use(
   morgan('combined', {
     stream: accessLogStream,
-    skip: function (req, res) {
+    skip(req, res) {
       return res.statusCode < 400;
     },
   })
 );
 
 const imageStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, 'public/images'); // 전송된 파일이 저장되는 디렉토리
   },
-  filename: function (req, file, cb) {
+  filename(req, file, cb) {
     cb(null, new Date().valueOf() + path.extname(file.originalname)); // 시스템 시간으로 파일이름을 변경해서 저장
   },
 });
@@ -80,10 +80,10 @@ const imageStorage = multer.diskStorage({
 const imageUpload = multer({ storage: imageStorage });
 
 const fileStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, 'uploads'); // 전송된 파일이 저장되는 디렉토리
   },
-  filename: function (req, file, cb) {
+  filename(req, file, cb) {
     cb(null, new Date().valueOf() + path.extname(file.originalname)); // 시스템 시간으로 파일이름을 변경해서 저장
   },
 });
@@ -120,7 +120,7 @@ const fileUpload = multer({ storage: fileStorage });
 // });
 
 app.get('/api/file/:filename', (req, res) => {
-  const file = './uploads/' + req.params.filename;
+  const file = `./uploads/${req.params.filename}`;
   try {
     if (fs.existsSync(file)) {
       res.download(file);
@@ -133,37 +133,29 @@ app.get('/api/file/:filename', (req, res) => {
   }
 });
 
-app.post(
-  '/api/upload/file',
-  fileUpload.single('attachment'),
-  async (req, res) => {
-    const fileInfo = {
-      product_id: parseInt(req.body.product_id),
-      originalname: req.file.originalname,
-      mimetype: req.file.mimetype,
-      filename: req.file.filename,
-      path: req.file.path,
-    };
+app.post('/api/upload/file', fileUpload.single('attachment'), async (req, res) => {
+  const fileInfo = {
+    product_id: parseInt(req.body.product_id),
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    filename: req.file.filename,
+    path: req.file.path,
+  };
 
-    res.send(fileInfo);
-  }
-);
+  res.send(fileInfo);
+});
 
-app.post(
-  '/api/upload/image',
-  imageUpload.single('attachment'),
-  async (req, res) => {
-    const fileInfo = {
-      product_id: parseInt(req.body.product_id),
-      originalname: req.file.originalname,
-      mimetype: req.file.mimetype,
-      filename: req.file.filename,
-      path: req.file.path,
-    };
+app.post('/api/upload/image', imageUpload.single('attachment'), async (req, res) => {
+  const fileInfo = {
+    product_id: parseInt(req.body.product_id),
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    filename: req.file.filename,
+    path: req.file.path,
+  };
 
-    res.send(fileInfo);
-  }
-);
+  res.send(fileInfo);
+});
 
 app.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
