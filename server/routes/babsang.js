@@ -3,10 +3,10 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
-router.get('/', (req, res) => {
-  // const babsangList = mysql.query('babsangList');
+router.get('/', async (req, res) => {
+  const babsangList = await mysql.query('babsangList');
 
-  res.send('/api/v1/babsang');
+  res.send(babsangList);
 });
 
 router.get('/:id', (req, res) => {
