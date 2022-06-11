@@ -16,11 +16,6 @@ const messageRouter = require('./routes/message');
 const profileRouter = require('./routes/profile');
 const scoreRouter = require('./routes/score');
 
-require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
-require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
-
-console.log(app.get('env'));
-
 app.use('/static/images', express.static('public/images'));
 
 app.use(
