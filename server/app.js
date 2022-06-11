@@ -36,7 +36,7 @@ const sess = {
 app.use(session(sess));
 
 const corsOptions = {
-  origin: 'http://localhost:8080', // 허용할 도메인 설정
+  origin: '*', // 허용할 도메인 설정
   optionsSuccessStatus: 200,
 };
 
