@@ -5,7 +5,7 @@
 ### [Back-end]
 
 - Node.js + express
-- MySQL 8.0
+- MySQL 8
 
 ### [Infra]
 

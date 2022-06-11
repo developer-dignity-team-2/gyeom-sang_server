@@ -9,10 +9,12 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
-require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
-const mysql = require('./mysql');
-require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
-const nodemailer = require('./nodemailer');
+const authRouter = require('./routes/auth');
+const babsangRouter = require('./routes/babsang');
+const commentRouter = require('./routes/comment');
+const messageRouter = require('./routes/message');
+const profileRouter = require('./routes/profile');
+const scoreRouter = require('./routes/score');
 
 app.use('/static/images', express.static('public/images'));
 
@@ -90,6 +92,13 @@ const fileStorage = multer.diskStorage({
 
 const fileUpload = multer({ storage: fileStorage });
 
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/babsang', babsangRouter);
+app.use('/api/v1/comment', commentRouter);
+app.use('/api/v1/message', messageRouter);
+app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/score', scoreRouter);
+
 // app.post("/login", (req, res) => {
 //   const { email, pw } = req.body.param;
 //   // 데이터베이스에 사용자가 있는지, 비밀번호는 맞는지 체크
@@ -135,7 +144,7 @@ app.get('/api/file/:filename', (req, res) => {
 
 app.post('/api/upload/file', fileUpload.single('attachment'), async (req, res) => {
   const fileInfo = {
-    product_id: parseInt(req.body.product_id),
+    product_id: parseInt(req.body.product_id, 10),
     originalname: req.file.originalname,
     mimetype: req.file.mimetype,
     filename: req.file.filename,
@@ -147,7 +156,7 @@ app.post('/api/upload/file', fileUpload.single('attachment'), async (req, res) =
 
 app.post('/api/upload/image', imageUpload.single('attachment'), async (req, res) => {
   const fileInfo = {
-    product_id: parseInt(req.body.product_id),
+    product_id: parseInt(req.body.product_id, 10),
     originalname: req.file.originalname,
     mimetype: req.file.mimetype,
     filename: req.file.filename,
