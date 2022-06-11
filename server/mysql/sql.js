@@ -1,3 +1,3 @@
 module.exports = {
-  // categoryList: `select * from product_category`,
+  babsangList: `select * from dining_table`,
 };
