@@ -5,11 +5,11 @@ const mysql = require('../mysql');
 
 // 댓글 구성
 
-router.get('/comment', (req, res) => {
-  // const { babsangId } = req.body;
-  // const commentList = mysql.query('commentList');
+router.get('/comment', async (req, res) => {
+  const { babsangId = 1 } = req.body;
+  const commentList = await mysql.query('commentList', { babsangId });
 
-  res.send('get /api/v1/comment');
+  res.send(commentList);
 });
 
 router.post('/comment', (req, res) => {
@@ -32,3 +32,5 @@ router.delete('/comment/:id', (req, res) => {
 
   res.send('delete /api/v1/comment/:id');
 });
+
+module.exports = router;
