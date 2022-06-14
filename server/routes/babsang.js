@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
   res.send('post /api/v1/babsang');
 });
 
-router.patch('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   //  const {  } = req.body;
   // const result = mysql.query('babsangUpdate', req.body)
 

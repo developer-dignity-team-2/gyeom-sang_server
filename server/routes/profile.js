@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
   res.send('get /api/v1/myPage/profile');
 });
 
-router.patch('/', (req, res) => {
+router.put('/', (req, res) => {
   // const {} = req.body
   // const profile = mysql.query('profileUpdate', {});
 

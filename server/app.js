@@ -93,11 +93,12 @@ const fileStorage = multer.diskStorage({
 const fileUpload = multer({ storage: fileStorage });
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/score', scoreRouter);
+
 app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/message', messageRouter);
-app.use('/api/v1/profile', profileRouter);
-app.use('/api/v1/score', scoreRouter);
 
 // app.post("/login", (req, res) => {
 //   const { email, pw } = req.body.param;
