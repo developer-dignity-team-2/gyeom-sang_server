@@ -19,7 +19,7 @@ router.post('/comment', (req, res) => {
   res.send('post /api/v1/comment');
 });
 
-router.patch('/comment/:id', (req, res) => {
+router.put('/comment/:id', (req, res) => {
   // const { } = req.body;
   // const comments = mysql.query('commentUpdate', id);
 
