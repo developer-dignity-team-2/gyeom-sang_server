@@ -9,6 +9,9 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
+require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
+require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
+
 const authRouter = require('./routes/auth');
 const babsangRouter = require('./routes/babsang');
 const commentRouter = require('./routes/comment');
