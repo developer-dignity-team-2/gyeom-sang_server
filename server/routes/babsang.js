@@ -4,26 +4,40 @@ const router = express.Router();
 const mysql = require('../mysql');
 
 router.get('/', async (req, res) => {
-  const babsangList = await mysql.query('babsangList');
+  try {
+    const babsangList = await mysql.query('babsangList');
 
-  res.send(babsangList);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: babsangList,
+    };
+
+    res.send(response);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  // const { id } = req.params;
-  // const babsang = mysql.query('babsang', id);
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const babsang = await mysql.query('babsang', id);
 
-  res.send('/api/v1/babsang/:id');
+  res.send(babsang);
 });
 
-router.post('/', (req, res) => {
-  // const {  } = req.body;
-  // const result = mysql.query('babsangInsert', req.body);
+router.post('/', async (req, res) => {
+  const bodyArray = Object.values(req.body);
+  try {
+    const result = await mysql.query('babsangInsert', bodyArray);
 
-  res.send('post /api/v1/babsang');
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.patch('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   //  const {  } = req.body;
   // const result = mysql.query('babsangUpdate', req.body)
 
