@@ -4,17 +4,21 @@ const router = express.Router();
 const mysql = require('../mysql');
 
 router.get('/', (req, res) => {
-  // const {} = req.
-  // const profile = mysql.query('profile', {});
-
-  res.send('get /api/v1/myPage/profile');
+  const profile = mysql.query('profile');
+  res.send(profile);
 });
 
-router.patch('/', (req, res) => {
-  // const {} = req.body
-  // const profile = mysql.query('profileUpdate', {});
+router.get('/score', (req, res) => {
+  const score = mysql.query('score');
+  res.send(score);
+});
 
-  res.send('patch /api/v1/myPage/profile');
+router.put('/', (req, res) => {
+  const bodyArray = Object.values(req.body);
+  // [profile_image = ? , ..., tmddhks0104@gmail.com]
+  const updatedProfile = mysql.query('profileUpdate', bodyArray);
+
+  res.send(updatedProfile);
 });
 
 module.exports = router;
