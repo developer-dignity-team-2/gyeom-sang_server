@@ -1,5 +1,10 @@
 {
-  "extends": ["airbnb", "prettier", "plugin:node/recommended", "plugin:prettier/recommended"],
+  "extends": [
+    "airbnb",
+    "prettier",
+    "plugin:node/recommended",
+    "plugin:prettier/recommended"
+  ],
 
   "rules": {
     "arrow-body-style": "off",
@@ -8,6 +13,7 @@
     "no-use-before-define": "off",
     "no-shadow": "off",
     "no-unused-expressions": ["warn"],
+    "no-unused-vars": ["warn"],
     "prefer-const": ["warn"],
     "prefer-destructuring": ["error", { "object": true, "array": false }],
     "lines-between-class-members": "off",
