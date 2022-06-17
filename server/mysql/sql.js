@@ -2,9 +2,9 @@ module.exports = {
   user: `select * from user where email = ?`,
   userInsert: `insert into user(email, gender, nickname, profile_image, profile_description, age_range)
                             values(?,?,?,?,?,?,?)`,
-  profile: `select * from user u inner join user_question_score_aggregation uqsa on u.email = uqsa.email;`,
+  profileDetail: `select * from user u inner join user_question_score_aggregation uqsa on u.email = uqsa.email where u.email = ?`,
   profileUpdate: `update user set ? where email = ?`,
-  scoreList: `select * from user_question_score_aggregation where email = ?`,
+  scoreDetail: `select * from user_question_score_aggregation where email = ?`,
   scoreUpdate: `update user_question_score_aggregation set ? where email = ? `,
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
