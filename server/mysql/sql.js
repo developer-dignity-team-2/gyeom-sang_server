@@ -11,4 +11,5 @@ module.exports = {
   babsangList: `select * from dining_table`,
   babsangDetail: `select * from dining_table where id = ?`,
   babsangInsert: `insert into dining_table set ?`,
+  babsangUpdate: `update dining_table set ? where id = ?`,
 };

@@ -38,11 +38,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const result = await mysql.query('babsangInsert', req.body.param);
-    console.log(result);
     const response = {
       code: 201,
       message: 'created',
-      result,
     };
     res.send(response);
   } catch (error) {
@@ -52,13 +50,17 @@ router.post('/', async (req, res) => {
 
 // 밥상 수정하기
 router.put('/:id', (req, res) => {
-  // try {
-  //   const { id } = req.params;
-  //   const result = mysql.query('babsangUpdate', req.body);
-  //   res.send('patch /api/v1/babsang/:id');
-  // } catch (error) {
-  //   res.send(error);
-  // }
+  try {
+    const { id } = req.params;
+    const result = mysql.query('babsangUpdate', [req.body.param, id]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 // 밥상 삭제하기
