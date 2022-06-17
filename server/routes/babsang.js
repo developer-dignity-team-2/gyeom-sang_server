@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
+// 밥상 목록 가져오기
 router.get('/', async (req, res) => {
   try {
     const babsangList = await mysql.query('babsangList');
@@ -19,11 +20,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 밥상 상세정보 가져오기
 router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const babsang = await mysql.query('babsang', id);
+  try {
+    const { id } = req.params;
+    const babsangDetail = await mysql.query('babsangDetail', id);
 
-  res.send(babsang);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: babsangDetail,
+    };
+
+    res.send(response);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post('/', async (req, res) => {

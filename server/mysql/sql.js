@@ -9,6 +9,7 @@ module.exports = {
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
   babsangList: `select * from dining_table`,
+  babsangDetail: `select * from dining_table where id = ?`,
   babsangInsert: `insert into dining_table(host_email, restaurant_name, dining_status, dining_count, dining_datetime, recruit_start_date, recruit_end_date, gender_check, dining_description, restaurant_location, dining_thumbnail)
                                 values(?,?,?,?, ?, ?, ?, ?, ?, ?, ?)`,
 };
