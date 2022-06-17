@@ -17,4 +17,9 @@ module.exports = {
   commentInsert: `insert into comment set ?`,
   commentUpdate: `update comment set ? where id = ?`,
   commentDelete: `delete from comment where id = ?`,
+  messageList: `select * from message`,
+  messageDetail: `select * from message where id = ?`,
+  messageInsert: `insert into message set ?`,
+  messageUpdate: `update message set ? where id = ?`,
+  messageDelete: `delete from message where id = ?`,
 };
