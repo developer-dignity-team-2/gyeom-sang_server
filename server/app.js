@@ -13,12 +13,13 @@ require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
 const authRouter = require('./routes/auth');
+const questionRouter = require('./routes/question');
+const profileRouter = require('./routes/profile');
+const aggregationRouter = require('./routes/aggregation');
+
 const babsangRouter = require('./routes/babsang');
 const commentRouter = require('./routes/comment');
 const messageRouter = require('./routes/message');
-const profileRouter = require('./routes/profile');
-const scoreRouter = require('./routes/score');
-const questionRouter = require('./routes/question');
 
 app.use('/static/images', express.static('public/images'));
 
@@ -98,9 +99,9 @@ const fileStorage = multer.diskStorage({
 const fileUpload = multer({ storage: fileStorage });
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/profile', profileRouter);
-app.use('/api/v1/score', scoreRouter);
 app.use('/api/v1/question', questionRouter);
+app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/score', aggregationRouter);
 
 app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);
