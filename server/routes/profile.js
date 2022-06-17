@@ -3,22 +3,33 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
-router.get('/', (req, res) => {
-  const profile = mysql.query('profile');
-  res.send(profile);
-});
-
-router.get('/score', (req, res) => {
-  const score = mysql.query('score');
-  res.send(score);
+router.get('/', async (req, res) => {
+  try {
+    const { email } = req.body.param;
+    const profileList = await mysql.query('profileDetail', email);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: profileList,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 router.put('/', (req, res) => {
-  const bodyArray = Object.values(req.body);
-  // [profile_image = ? , ..., tmddhks0104@gmail.com]
-  const updatedProfile = mysql.query('profileUpdate', bodyArray);
-
-  res.send(updatedProfile);
+  try {
+    const { email, ...params } = req.body.param;
+    const result = mysql.query('profileUpdate', [params, email]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 module.exports = router;
