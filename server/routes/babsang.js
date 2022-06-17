@@ -7,16 +7,14 @@ const mysql = require('../mysql');
 router.get('/', async (req, res) => {
   try {
     const babsangList = await mysql.query('babsangList');
-
     const response = {
       code: 200,
       message: 'ok',
       result: babsangList,
     };
-
     res.send(response);
   } catch (error) {
-    console.log(error);
+    res.send(error);
   }
 });
 
@@ -25,37 +23,45 @@ router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const babsangDetail = await mysql.query('babsangDetail', id);
-
     const response = {
       code: 200,
       message: 'ok',
       result: babsangDetail,
     };
-
     res.send(response);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-router.post('/', async (req, res) => {
-  const bodyArray = Object.values(req.body);
-  try {
-    const result = await mysql.query('babsangInsert', bodyArray);
-
-    res.send(result);
   } catch (error) {
     res.send(error);
   }
 });
 
-router.put('/:id', (req, res) => {
-  //  const {  } = req.body;
-  // const result = mysql.query('babsangUpdate', req.body)
-
-  res.send('patch /api/v1/babsang/:id');
+// 밥상 생성하기
+router.post('/', async (req, res) => {
+  try {
+    const result = await mysql.query('babsangInsert', req.body.param);
+    console.log(result);
+    const response = {
+      code: 201,
+      message: 'created',
+      result,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
+// 밥상 수정하기
+router.put('/:id', (req, res) => {
+  // try {
+  //   const { id } = req.params;
+  //   const result = mysql.query('babsangUpdate', req.body);
+  //   res.send('patch /api/v1/babsang/:id');
+  // } catch (error) {
+  //   res.send(error);
+  // }
+});
+
+// 밥상 삭제하기
 router.delete('/:id', (req, res) => {
   // const { id } = req.params;
   // const babsang = mysql.query('babsangDelete', id);
