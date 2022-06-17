@@ -3,19 +3,23 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
-router.get('/:email', (req, res) => {
-  const { email } = req.params;
-  const scoreList = mysql.query('scoreList', email);
+router.get('/', async (req, res) => {
+  const { email } = req.body.param;
+  console.log(email);
+  const scoreList = await mysql.query('scoreList', email);
   res.send(scoreList);
 });
 
-router.put('/:email', (req, res) => {
-  const { email } = req.params;
-  const bodyArray = req.body;
-  const payload = [bodyArray, email];
-  const score = mysql.query('scoreUpdate', payload);
+router.put('/', (req, res) => {
+  const { email, ...params } = req.body.param;
+  console.log(email);
+  console.log(params);
 
-  res.send(score);
+  // const payload = [bodyArray, email];
+
+  // const score = mysql.query('scoreUpdate', payload);
+
+  res.send('12323');
 });
 
 module.exports = router;
