@@ -65,10 +65,17 @@ router.put('/:id', (req, res) => {
 
 // 밥상 삭제하기
 router.delete('/:id', (req, res) => {
-  // const { id } = req.params;
-  // const babsang = mysql.query('babsangDelete', id);
-
-  res.send('delete /api/v1/babsang/:id');
+  try {
+    const { id } = req.params;
+    const result = mysql.query('babsangDelete', id);
+    const response = {
+      code: 204,
+      message: 'deleted',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 module.exports = router;
