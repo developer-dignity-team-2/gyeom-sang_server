@@ -13,4 +13,8 @@ module.exports = {
   babsangInsert: `insert into dining_table set ?`,
   babsangUpdate: `update dining_table set ? where id = ?`,
   babsangDelete: `delete from dining_table where id = ? `,
+  commentList: `select * from comment where dining_id = ?`,
+  commentInsert: `insert into comment set ?`,
+  commentUpdate: `update comment set ? where id = ?`,
+  commentDelete: `delete from comment where id = ?`,
 };

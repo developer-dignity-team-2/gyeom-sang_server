@@ -3,34 +3,64 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
-// 댓글 구성
-
-router.get('/comment', async (req, res) => {
-  const { babsangId = 1 } = req.body;
-  const commentList = await mysql.query('commentList', { babsangId });
-
-  res.send(commentList);
+// 댓글 목록 가져오기
+router.get('/:babsangId', async (req, res) => {
+  try {
+    const { babsangId } = req.params;
+    const commentList = await mysql.query('commentList', babsangId);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: commentList,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.post('/comment', (req, res) => {
-  // const { } = req.body;
-  // const comment = mysql.query('commentInsert', req.body);
-
-  res.send('post /api/v1/comment');
+// 댓글 생성하기
+router.post('/', async (req, res) => {
+  try {
+    const result = await mysql.query('commentInsert', req.body.param);
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.put('/comment/:id', (req, res) => {
-  // const { } = req.body;
-  // const comments = mysql.query('commentUpdate', id);
-
-  res.send('patch /api/v1/comment/:id');
+// 댓글 수정하기
+router.put('/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = mysql.query('commentUpdate', [req.body.param, id]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.delete('/comment/:id', (req, res) => {
-  // const { } = req.body;
-  // const comments = mysql.query('commentDelete', id);
-
-  res.send('delete /api/v1/comment/:id');
+// 댓글 삭제하기
+router.delete('/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = mysql.query('commentDelete', id);
+    const response = {
+      code: 204,
+      message: 'deleted',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 module.exports = router;
