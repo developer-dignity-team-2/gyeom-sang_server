@@ -9,12 +9,17 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
+require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
+require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
+
 const authRouter = require('./routes/auth');
+const questionRouter = require('./routes/question');
+const profileRouter = require('./routes/profile');
+const aggregationRouter = require('./routes/aggregation');
+
 const babsangRouter = require('./routes/babsang');
 const commentRouter = require('./routes/comment');
 const messageRouter = require('./routes/message');
-const profileRouter = require('./routes/profile');
-const scoreRouter = require('./routes/score');
 
 app.use('/static/images', express.static('public/images'));
 
@@ -47,7 +52,8 @@ app.use(cors(corsOptions));
 const generator = (time, index) => {
   if (!time) return 'file.log';
 
-  const yearmonth = time.getFullYear() + (time.getMonth() + 1).toString().padStart(2, '0');
+  const yearmonth =
+    time.getFullYear() + (time.getMonth() + 1).toString().padStart(2, '0');
   const day = time.getDate().toString().padStart(2, '0');
   const hour = time.getHours().toString().padStart(2, '0');
   const minute = time.getMinutes().toString().padStart(2, '0');
@@ -93,8 +99,9 @@ const fileStorage = multer.diskStorage({
 const fileUpload = multer({ storage: fileStorage });
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/question', questionRouter);
 app.use('/api/v1/profile', profileRouter);
-app.use('/api/v1/score', scoreRouter);
+app.use('/api/v1/score', aggregationRouter);
 
 app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);
@@ -143,29 +150,37 @@ app.get('/api/file/:filename', (req, res) => {
   }
 });
 
-app.post('/api/upload/file', fileUpload.single('attachment'), async (req, res) => {
-  const fileInfo = {
-    product_id: parseInt(req.body.product_id, 10),
-    originalname: req.file.originalname,
-    mimetype: req.file.mimetype,
-    filename: req.file.filename,
-    path: req.file.path,
-  };
+app.post(
+  '/api/upload/file',
+  fileUpload.single('attachment'),
+  async (req, res) => {
+    const fileInfo = {
+      product_id: parseInt(req.body.product_id, 10),
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      filename: req.file.filename,
+      path: req.file.path,
+    };
 
-  res.send(fileInfo);
-});
+    res.send(fileInfo);
+  }
+);
 
-app.post('/api/upload/image', imageUpload.single('attachment'), async (req, res) => {
-  const fileInfo = {
-    product_id: parseInt(req.body.product_id, 10),
-    originalname: req.file.originalname,
-    mimetype: req.file.mimetype,
-    filename: req.file.filename,
-    path: req.file.path,
-  };
+app.post(
+  '/api/upload/image',
+  imageUpload.single('attachment'),
+  async (req, res) => {
+    const fileInfo = {
+      product_id: parseInt(req.body.product_id, 10),
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      filename: req.file.filename,
+      path: req.file.path,
+    };
 
-  res.send(fileInfo);
-});
+    res.send(fileInfo);
+  }
+);
 
 app.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');

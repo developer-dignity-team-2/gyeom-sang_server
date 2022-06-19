@@ -3,33 +3,79 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
-router.get('/', (req, res) => {
-  // const messageList = mysql.query('messageList');
-  // res.send(messageList);
-  res.send('get api/v1/message');
+// 메시지 목록 가져오기
+router.get('/', async (req, res) => {
+  try {
+    const messageList = await mysql.query('messageList');
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: messageList,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  // const { id } = req.params;
-  // const message = mysql.query('message', id);
-
-  res.send('get /api/v1/message/:id');
+// 메시지 상세정보 가져오기
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const messageDetail = await mysql.query('messageDetail', id);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: messageDetail,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.post('/', (req, res) => {
-  // const {  } = req.body;
-  // const result = mysql.query('messageInsert', req.body);
-
-  res.send('post /api/v1/message');
+// 메시지 생성하기
+router.post('/', async (req, res) => {
+  try {
+    const result = await mysql.query('messageInsert', req.body.param);
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-// 메시지 읽음처리 (put)
+// 메시지 수정하기
+router.put('/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = mysql.query('messageUpdate', [req.body.param, id]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
+// 메시지 삭제하기
 router.delete('/:id', (req, res) => {
-  // const { id } = req.params;
-  // const message = mysql.query('messageDelete', id);
-
-  res.send('delete /api/v1/message/:id');
+  try {
+    const { id } = req.params;
+    const result = mysql.query('messageDelete', id);
+    const response = {
+      code: 204,
+      message: 'deleted',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 module.exports = router;

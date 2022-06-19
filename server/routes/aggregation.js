@@ -6,11 +6,11 @@ const mysql = require('../mysql');
 router.get('/', async (req, res) => {
   try {
     const { email } = req.body.param;
-    const profileList = await mysql.query('profileDetail', email);
+    const scoreList = await mysql.query('scoreDetail', email);
     const response = {
       code: 200,
       message: 'ok',
-      result: profileList,
+      result: scoreList,
     };
     res.send(response);
   } catch (error) {
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 router.put('/', (req, res) => {
   try {
     const { email, ...params } = req.body.param;
-    const result = mysql.query('profileUpdate', [params, email]);
+    const result = mysql.query('scoreUpdate', [params, email]);
     const response = {
       code: 201,
       message: 'updated',
