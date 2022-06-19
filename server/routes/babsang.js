@@ -78,4 +78,54 @@ router.delete('/:id', (req, res) => {
   }
 });
 
+// 밥장의 숟갈 선정하기
+// 숟갈의 밥상 신청하기
+router.post('/', async (req, res) => {
+  try {
+    const { type } = req.query;
+
+    const babSangTreatType = {
+      select: 'babsangSelect',
+      apply: 'babsangApply',
+    }[type];
+
+    const result = await mysql.query(babSangTreatType, req.body.param);
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// 숟갈 얹은 밥상 가져오기
+// 차려 놓은 밥상 가져오기
+// 선정된 밥상 가져오기
+// 찜한 밥상 가져오기
+router.get('/', async (req, res) => {
+  try {
+    const { type } = req.query;
+    const babsangGetType = {
+      selectedList: 'babsangSelectedList',
+      appliedList: 'babsangAppliedList',
+      createdList: 'babsangCreatedList',
+      bookmarkedList: 'babsangBookmarkedList',
+    }[type];
+    const babsangGetTypeResult = await mysql.query(
+      babsangGetType,
+      req.body.param
+    );
+    const response = {
+      code: 201,
+      message: 'created',
+      result: babsangGetTypeResult,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 module.exports = router;
