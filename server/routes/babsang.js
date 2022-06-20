@@ -18,22 +18,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 밥상 상세정보 가져오기
-router.get('/:id(\\d+)', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const babsangDetail = await mysql.query('babsangDetail', id);
-    const response = {
-      code: 200,
-      message: 'ok',
-      result: babsangDetail,
-    };
-    res.send(response);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
 // 숟갈 얹은 밥상 목록 가져오기
 // 차려 놓은 밥상 목록 가져오기
 // 선정된 밥상 목록 가져오기
@@ -55,6 +39,22 @@ router.get('/get', async (req, res) => {
       code: 200,
       message: 'ok',
       result: babsangGetTypeResult,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// 밥상 상세정보 가져오기
+router.get('/:id(\\d+)', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const babsangDetail = await mysql.query('babsangDetail', id);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: babsangDetail,
     };
     res.send(response);
   } catch (error) {
@@ -137,7 +137,7 @@ router.post('/', async (req, res) => {
 });
 
 // 밥상 수정하기
-router.put('/:id', (req, res) => {
+router.put('/:id(\\d+)', (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('babsangUpdate', [req.body.param, id]);
@@ -152,13 +152,46 @@ router.put('/:id', (req, res) => {
 });
 
 // 밥상 삭제하기
-router.delete('/:id', (req, res) => {
+router.delete('/:id(\\d+)', (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('babsangDelete', id);
     const response = {
       code: 204,
       message: 'deleted',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// 밥상 찜하기
+router.post('/bookmark', async (req, res) => {
+  try {
+    const result = await mysql.query('babsangBookmarkInsert', req.body.param);
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// 밥상 찜 해제하기
+router.put('/bookmark', (req, res) => {
+  try {
+    const result = mysql.query(
+      'babsangBookmarkUpdate',
+      req.body.param,
+      req.body.user_email,
+      req.body.dining_table_id
+    );
+    const response = {
+      code: 201,
+      message: 'updated',
     };
     res.send(response);
   } catch (error) {
