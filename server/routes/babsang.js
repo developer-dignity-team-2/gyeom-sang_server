@@ -34,6 +34,34 @@ router.get('/:id(\\d+)', async (req, res) => {
   }
 });
 
+// 숟갈 얹은 밥상 목록 가져오기
+// 차려 놓은 밥상 목록 가져오기
+// 선정된 밥상 목록 가져오기
+// 찜한 밥상 목록 가져오기
+router.get('/get', async (req, res) => {
+  try {
+    const { type } = req.query;
+    const babsangGetType = {
+      appliedList: 'babsangAppliedList',
+      createdList: 'babsangCreatedList',
+      selectedList: 'babsangSelectedList',
+      bookmarkedList: 'babsangBookmarkedList',
+    }[type];
+    const babsangGetTypeResult = await mysql.query(
+      babsangGetType,
+      req.body.email
+    );
+    const response = {
+      code: 200,
+      message: 'ok',
+      result: babsangGetTypeResult,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 // 밥상_숟갈 목록 가져오기
 router.get('/:id(\\d+)/babsangSpoons', async (req, res) => {
   try {
@@ -87,34 +115,6 @@ router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
     const response = {
       code: 201,
       message: 'updated',
-    };
-    res.send(response);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-// 숟갈 얹은 밥상 가져오기
-// 차려 놓은 밥상 가져오기
-// 선정된 밥상 가져오기
-// 찜한 밥상 가져오기
-router.get('/:id(\\d+)/get', async (req, res) => {
-  try {
-    const { type } = req.query;
-    const babsangGetType = {
-      selectedList: 'babsangSelectedList',
-      appliedList: 'babsangAppliedList',
-      createdList: 'babsangCreatedList',
-      bookmarkedList: 'babsangBookmarkedList',
-    }[type];
-    const babsangGetTypeResult = await mysql.query(
-      babsangGetType,
-      req.body.param
-    );
-    const response = {
-      code: 201,
-      message: 'created',
-      result: babsangGetTypeResult,
     };
     res.send(response);
   } catch (error) {
