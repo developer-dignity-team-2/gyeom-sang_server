@@ -183,12 +183,11 @@ router.post('/bookmark', async (req, res) => {
 // 밥상 찜 해제하기
 router.put('/bookmark', (req, res) => {
   try {
-    const result = mysql.query(
-      'babsangBookmarkUpdate',
+    const result = mysql.query('babsangBookmarkUpdate', [
       req.body.param,
       req.body.user_email,
-      req.body.dining_table_id
-    );
+      req.body.dining_table_id,
+    ]);
     const response = {
       code: 201,
       message: 'updated',
