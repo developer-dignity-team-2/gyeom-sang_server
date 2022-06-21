@@ -1,3 +1,4 @@
 # Ignore all md files
 *.md
 *.json
+.env
