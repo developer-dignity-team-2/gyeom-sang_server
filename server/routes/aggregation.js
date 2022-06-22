@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql');
 
+// 사용자 질문 및 점수 목록 가져오기
 router.get('/', async (req, res) => {
   try {
     const { email } = req.body.param;
@@ -18,6 +19,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 사용자 질문 및 점수 목록 수정하기
 router.put('/', (req, res) => {
   try {
     const { email, ...params } = req.body.param;
