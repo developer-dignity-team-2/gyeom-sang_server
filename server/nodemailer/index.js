@@ -1,7 +1,5 @@
 const nodemailer = require('nodemailer');
 
-require('dotenv').config({ path: `nodemailer/.env.prod` });
-
 // 교재 pg.261 참고
 const config = {
   service: 'gmail',
