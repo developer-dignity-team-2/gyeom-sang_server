@@ -1,11 +1,14 @@
 const express = require('express');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 const mysql = require('../mysql');
 
-router.get('/', async (req, res) => {
+// 사용자 정보 가져오기
+router.get('/', auth, async (req, res) => {
   try {
-    const { email } = req.body.param;
+    const { email } = req.decoded;
+
     const profileList = await mysql.query('profileDetail', email);
     const response = {
       code: 200,
@@ -18,6 +21,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 사용자 정보 수정하기
 router.put('/', (req, res) => {
   try {
     const { email, ...params } = req.body.param;

@@ -1,14 +1,14 @@
 module.exports = {
-  user: `select * from user where email = ?`,
-  userInsert: `insert into user(email, gender, nickname, profile_image, profile_description, age_range)
-                            values(?,?,?,?,?,?,?)`,
+  userDetail: `select * from user where email = ?`,
+  profileInsert: `insert into user set ?`,
   profileDetail: `select * from user u inner join user_question_score_aggregation uqsa on u.email = uqsa.email where u.email = ?`,
   profileUpdate: `update user set ? where email = ?`,
+  scoreInsert: `insert into user_question_score_aggregation set ?`,
   scoreDetail: `select * from user_question_score_aggregation where email = ?`,
   scoreUpdate: `update user_question_score_aggregation set ? where email = ? `,
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
-  babsangList: `select * from dining_table`,
+  babsangList: `select t1.*, t2.nickname from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
   babsangDetail: `select * from dining_table where id = ?`,
   babsangInsert: `insert into dining_table set ?`,
   babsangUpdate: `update dining_table set ? where id = ?`,

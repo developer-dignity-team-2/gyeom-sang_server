@@ -9,6 +9,7 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
+require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
@@ -28,7 +29,6 @@ app.use(
     limit: '50mb', // 최대 50메가
   })
 ); // 클라이언트 요청 body를 json으로 파싱 처리
-
 const sess = {
   secret: 'secret key',
   resave: false, // 세션에 변경사항이 없어도 항상 다시 저장할지 여부
@@ -101,7 +101,7 @@ const fileUpload = multer({ storage: fileStorage });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/question', questionRouter);
 app.use('/api/v1/profile', profileRouter);
-app.use('/api/v1/score', aggregationRouter);
+app.use('/api/v1/aggregation', aggregationRouter);
 
 app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);

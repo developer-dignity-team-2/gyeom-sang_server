@@ -1,61 +1,80 @@
 const express = require('express');
 const axios = require('axios');
-const qs = require('qs');
+const jwt = require('jsonwebtoken');
 
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 const router = express.Router();
 const mysql = require('../mysql');
 
 const kakao = {
-  clientID: 'e4c5f2e3c236226f4e72a1aaba4ce0ac',
-  clientSecret: 'vvIPDsINjKLDbk0v2vqiq84MOPY8u36i',
-  redirectUri: 'http://localhost:3000/api/v1/auth/kakao/callback',
+  clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  redirectUri: process.env.REDIRECT_URI,
 };
+
+// 카카오 로그인
 router.get('/kakao', (req, res) => {
   const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code`;
   res.redirect(kakaoAuthURL);
 });
 
+// 카카오 로그인 리다이렉트
 router.get('/kakao/callback', async (req, res) => {
-  let token;
-
-  try {
-    token = await axios({
-      method: 'POST',
-      url: 'https://kauth.kakao.com/oauth/token',
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-      },
-      data: qs.stringify({
-        grant_type: 'authorization_code',
-        client_id: kakao.clientID,
-        client_secret: kakao.clientSecret,
-        redirectUri: kakao.redirectUri,
-        code: req.query.code,
-      }),
-    });
-  } catch (err) {
-    res.json(err.data);
-  }
+  const token = req.headers.authorization;
 
   let user;
+
   try {
-    console.log(token);
     user = await axios({
-      method: 'get',
+      method: 'GET',
       url: 'https://kapi.kakao.com/v2/user/me',
       headers: {
-        Authorization: `Bearer ${token.data.access_token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
+    console.log(user);
   } catch (e) {
     res.json(e.data);
   }
-  console.log(user);
 
-  req.session.kakao = user.data;
-  // req.session = {['kakao'] : user.data};
+  const {
+    properties: { nickname, profile_image: profileImage },
+    kakao_account: { gender, email, age_range: ageRange },
+  } = user.data;
 
-  res.send('success');
+  const userInfo = {
+    email,
+    gender: gender.slice(0, 1).toUpperCase(),
+    nickname,
+    profile_image: profileImage,
+    profile_description: '편하게 작성해주세요!',
+    age_range: ageRange,
+  };
+
+  try {
+    const dbUser = await mysql.query('userDetail', email);
+
+    if (dbUser.length < 1) {
+      const result = await mysql.query('profileInsert', userInfo);
+      const result2 = await mysql.query('scoreInsert', { email });
+    }
+  } catch (error) {
+    res.send(error);
+  }
+
+  const jwtToken = jwt.sign(
+    {
+      type: 'JWT',
+      email,
+    },
+    SECRET_KEY,
+    {
+      expiresIn: '180m',
+      issuer: 'babsang',
+    }
+  );
+
+  res.send(jwtToken);
 });
 
 module.exports = router;
