@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const mysql = require('../mysql');
+const nodemailer = require('../nodemailer');
 
 // 밥상 목록 가져오기
 router.get('/', async (req, res) => {
@@ -90,6 +91,15 @@ router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
       message: 'created',
     };
     res.send(response);
+
+    // 숟갈의 밥상 신청 이메일을 밥장에게 전송
+    const emailData = {
+      from: 'ding-co@naver.com', // 숟갈
+      to: 'pangoons@naver.com', // 밥장
+      subject: '숟갈이 밥상을 신청했습니다.', // 이메일 제목
+      html: '반갑다 친구야', // 이메일 내용
+    };
+    await nodemailer.send(emailData);
   } catch (error) {
     res.send(error);
   }
@@ -117,6 +127,17 @@ router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
       message: 'updated',
     };
     res.send(response);
+
+    // if (type === 'pick') {
+    //   // 밥장의 숟갈 선정 이메일을 숟갈에게 전송
+    //   const emailData = {
+    //     from: '', // 밥장
+    //     to: '', // 숟갈
+    //     subject: '밥장이 숟갈을 선정했습니다.', // 이메일 제목
+    //     html: '당신은 숟갈로 선정되었습니다.', // 이메일 내용
+    //   };
+    //   await nodemailer.send(emailData);
+    // }
   } catch (error) {
     res.send(error);
   }
