@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// 교재 pg.261 참고
 const config = {
   service: 'gmail',
   host: 'smtp.gmail.com',
