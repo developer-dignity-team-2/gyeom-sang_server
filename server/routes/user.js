@@ -21,6 +21,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// 사용자 정보 생성하기
 // router.post('/', async (req, res) => {
 //   try {
 //     const profile = await mysql.query('profileDetail', email);
