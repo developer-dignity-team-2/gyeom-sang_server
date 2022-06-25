@@ -21,6 +21,20 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// router.post('/', async (req, res) => {
+//   try {
+//     const profile = await mysql.query('profileDetail', email);
+//     const response = {
+//       code: 200,
+//       message: 'ok',
+//       result: profileList,
+//     };
+
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
 // 사용자 정보 수정하기
 router.put('/', auth, async (req, res) => {
   try {
