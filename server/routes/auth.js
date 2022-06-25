@@ -60,4 +60,25 @@ router.get('/kakao/signin', async (req, res) => {
   }
 });
 
+router.post('/kakao/signout', async (req, res) => {
+  const token = req.headers.authorization;
+
+  try {
+    const result = await axios({
+      method: 'POST',
+      url: 'https://kapi.kakao.com/v1/user/logout',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 module.exports = router;
