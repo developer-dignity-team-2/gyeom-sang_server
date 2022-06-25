@@ -51,7 +51,7 @@ router.get('/get', async (req, res) => {
 router.get('/:id(\\d+)', async (req, res) => {
   try {
     const { id } = req.params;
-    const babsangDetail = await mysql.query('babsangDetail', id);
+    const babsangDetail = await mysql.query('babsangDetail', [id, id]);
     const response = {
       code: 200,
       message: 'ok',

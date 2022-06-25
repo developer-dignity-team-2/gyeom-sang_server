@@ -9,7 +9,9 @@ module.exports = {
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
   babsangList: `select t1.*, t2.nickname from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
-  babsangDetail: `select * from dining_table where id = ?`,
+  babsangDetail: `select t1.*, t2.nickname, t2.profile_image, t2.profile_description, t3.dining_score,
+  (select count(*) from dining_table_spoons where dining_table_id = ?) as spoon_count from dining_table t1
+  inner join user t2 on t1.host_email = t2.email inner join user_question_score_aggregation t3 on t1.host_email = t3.email where id = ?`,
   babsangInsert: `insert into dining_table set ?`,
   babsangUpdate: `update dining_table set ? where id = ?`,
   babsangDelete: `delete from dining_table where id = ? `,
