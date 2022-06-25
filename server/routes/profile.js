@@ -1,8 +1,8 @@
 const express = require('express');
-const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 const mysql = require('../mysql');
+const { auth } = require('../middleware/auth');
 
 // 사용자 정보 가져오기
 router.get('/', auth, async (req, res) => {
@@ -22,10 +22,12 @@ router.get('/', auth, async (req, res) => {
 });
 
 // 사용자 정보 수정하기
-router.put('/', (req, res) => {
+router.put('/', auth, async (req, res) => {
   try {
-    const { email, ...params } = req.body.param;
-    const result = mysql.query('profileUpdate', [params, email]);
+    const { param } = req.body;
+    const { email } = req.decoded;
+
+    const result = await mysql.query('profileUpdate', [param, email]);
     const response = {
       code: 201,
       message: 'updated',

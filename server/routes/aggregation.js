@@ -2,11 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 const mysql = require('../mysql');
+const { auth } = require('../middleware/auth');
 
 // 사용자 질문 및 점수 목록 가져오기
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const { email } = req.body.param;
+    const { email } = req.decoded;
+
     const scoreList = await mysql.query('scoreDetail', email);
     const response = {
       code: 200,
@@ -20,10 +22,12 @@ router.get('/', async (req, res) => {
 });
 
 // 사용자 질문 및 점수 목록 수정하기
-router.put('/', (req, res) => {
+router.put('/', auth, (req, res) => {
   try {
-    const { email, ...params } = req.body.param;
-    const result = mysql.query('scoreUpdate', [params, email]);
+    const { email } = req.decoded;
+    const { param } = req.body;
+
+    const result = mysql.query('scoreUpdate', [param, email]);
     const response = {
       code: 201,
       message: 'updated',

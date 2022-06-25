@@ -9,7 +9,6 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
-require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
@@ -29,24 +28,23 @@ app.use(
     limit: '50mb', // 최대 50메가
   })
 ); // 클라이언트 요청 body를 json으로 파싱 처리
-const sess = {
-  secret: 'secret key',
-  resave: false, // 세션에 변경사항이 없어도 항상 다시 저장할지 여부
-  saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 강제로 저장할지 여부
-  cookie: {
-    httpOnly: true, // document.cookie 해도 쿠키 정보를 볼 수 없음
-    secure: false, // https
-    maxAge: 1000 * 60 * 60, // 쿠키가 유지되는 시간
-  },
-};
 
-app.use(session(sess));
+// const sess = {
+//   secret: 'secret key',
+//   resave: false, // 세션에 변경사항이 없어도 항상 다시 저장할지 여부
+//   saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 강제로 저장할지 여부
+//   cookie: {
+//     httpOnly: true, // document.cookie 해도 쿠키 정보를 볼 수 없음
+//     secure: false, // https
+//     maxAge: 1000 * 60 * 60, // 쿠키가 유지되는 시간
+//   },
+// };
+// app.use(session(sess));
 
 const corsOptions = {
   origin: '*', // 허용할 도메인 설정
   optionsSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
 const generator = (time, index) => {
