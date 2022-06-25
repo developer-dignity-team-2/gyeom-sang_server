@@ -15,7 +15,7 @@ require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
 const authRouter = require('./routes/auth');
 const questionRouter = require('./routes/question');
-const profileRouter = require('./routes/profile');
+const userRouter = require('./routes/user');
 const aggregationRouter = require('./routes/aggregation');
 
 const babsangRouter = require('./routes/babsang');
@@ -100,7 +100,7 @@ const fileUpload = multer({ storage: fileStorage });
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/question', questionRouter);
-app.use('/api/v1/profile', profileRouter);
+app.use('/api/v1/user', userRouter);
 app.use('/api/v1/aggregation', aggregationRouter);
 
 app.use('/api/v1/babsang', babsangRouter);
