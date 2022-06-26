@@ -165,11 +165,11 @@ app.post(
 );
 
 app.post(
-  '/api/upload/image',
-  imageUpload.single('attachment'),
+  '/api/v1/upload/image',
+  imageUpload.single('file'),
   async (req, res) => {
     const fileInfo = {
-      product_id: parseInt(req.body.product_id, 10),
+      //product_id: parseInt(req.body.product_id, 10),
       originalname: req.file.originalname,
       mimetype: req.file.mimetype,
       filename: req.file.filename,
