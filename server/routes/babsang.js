@@ -82,10 +82,14 @@ router.get('/:id(\\d+)/babsangSpoons', async (req, res) => {
 router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
   try {
     const { type } = req.query;
+    const { id } = req.params;
     const babsangSpoonsType = {
       apply: 'babsangSpoonsInsert',
     }[type];
-    const result = await mysql.query(babsangSpoonsType, req.body.param);
+    const result = await mysql.query(babsangSpoonsType, {
+      ...req.body.param,
+      dining_table_id: id,
+    });
     const response = {
       code: 201,
       message: 'created',
@@ -93,27 +97,29 @@ router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
 
     const emailRequiredResult = await mysql.query('babsangSpoonsListDetail', [
       req.body.param.spoon_email,
-      req.body.param.dining_table_id,
+      id,
     ]);
 
     res.send(response);
 
     // 숟갈의 밥상 신청 이메일을 밥장에게 전송
-    // const h = [];
-    // h.push(`<span>hi</span>`);
-    // const emailData = {
-    //   from: 'meetbaabs@gmail.com', // 관리자
-    //   to: emailRequiredResult[0].host_email, // 밥장
-    //   subject: '숟갈이 밥상을 신청했습니다.', // 이메일 제목
-    //   html: h.join(''), // 이메일 내용
-    //   attachments: [
-    //     {
-    //       filename: '',
-    //       path: '../uploads/test.jpg',
-    //     },
-    //   ],
-    // };
-    // await nodemailer.send(emailData);
+    const h = [];
+    h.push(
+      `<span>${emailRequiredResult[0].spoon_nickname} 숟갈님은 ${emailRequiredResult[0].restaurant_name} 밥상에 신청하였습니다.</span>`
+    );
+    const emailData = {
+      from: 'meetbaabs@gmail.com', // 관리자
+      to: emailRequiredResult[0].host_email, // 밥장
+      subject: '숟갈이 밥상을 신청했습니다.', // 이메일 제목
+      html: h.join(''), // 이메일 내용
+      // attachments: [
+      //   {
+      //     filename: '',
+      //     path: '../uploads/test.jpg',
+      //   },
+      // ],
+    };
+    await nodemailer.send(emailData);
   } catch (error) {
     res.send(error);
   }
@@ -143,6 +149,8 @@ router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
     res.send(response);
 
     // 밥상 이름과 숟갈 닉네임
+
+    // 밥상 id,
 
     // if (type === 'pick') {
     //   // 밥장의 숟갈 선정 이메일을 숟갈에게 전송
