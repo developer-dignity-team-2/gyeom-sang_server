@@ -38,7 +38,7 @@ router.get('/kakao/signin', async (req, res) => {
     const dbUser = await mysql.query('userDetail', email);
 
     if (dbUser.length < 1) {
-      await mysql.query('profileInsert', userInfo);
+      await mysql.query('userInsert', userInfo);
       await mysql.query('scoreInsert', { email });
     }
 

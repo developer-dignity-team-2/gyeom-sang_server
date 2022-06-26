@@ -9,11 +9,11 @@ router.get('/', auth, async (req, res) => {
   try {
     const { email } = req.decoded;
 
-    const profileList = await mysql.query('profileDetail', email);
+    const userDetail = await mysql.query('userDetail', email);
     const response = {
       code: 200,
       message: 'ok',
-      result: profileList,
+      result: userDetail,
     };
     res.send(response);
   } catch (error) {
@@ -21,13 +21,27 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// 사용자 정보 생성하기
+// router.post('/', async (req, res) => {
+//   try {
+//     const result = await mysql.query('userInsert', email);
+//     const response = {
+//       code: 200,
+//       message: 'ok',
+//     };
+
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+
 // 사용자 정보 수정하기
 router.put('/', auth, async (req, res) => {
   try {
     const { param } = req.body;
     const { email } = req.decoded;
 
-    const result = await mysql.query('profileUpdate', [param, email]);
+    const result = await mysql.query('userUpdate', [param, email]);
     const response = {
       code: 201,
       message: 'updated',

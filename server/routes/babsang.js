@@ -142,21 +142,25 @@ router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
     };
     res.send(response);
 
+    // 밥상 이름과 숟갈 닉네임
+
     // if (type === 'pick') {
     //   // 밥장의 숟갈 선정 이메일을 숟갈에게 전송
-    // const h = [];
-    // h.push(`<span>hi</span>`);
+    //   const h = [];
+    //   h.push(
+    //     `<span>축하합니다 ^O^ ${}님은 ${} 밥상의 숟갈로 선정되셨습니다.</span>`
+    //   );
     //   const emailData = {
     //     from: 'meetbaabs@gmail.com', // 관리자
     //     to: req.body.spoon_email, // 숟갈
     //     subject: '밥장이 숟갈을 선정했습니다.', // 이메일 제목
-    //   html: h.join(''), // 이메일 내용
-    //     attachments: [
-    //       {
-    //         filename: '',
-    //         path: '../uploads/test.jpg',
-    //       },
-    //     ],
+    //     html: h.join(''), // 이메일 내용
+    //     // attachments: [
+    //     //   {
+    //     //     filename: '',
+    //     //     path: '../uploads/test.jpg',
+    //     //   },
+    //     // ],
     //   };
     //   await nodemailer.send(emailData);
     // }
