@@ -38,7 +38,7 @@ router.get('/kakao/signin', async (req, res) => {
     const dbUser = await mysql.query('userDetail', email);
 
     if (dbUser.length < 1) {
-      await mysql.query('profileInsert', userInfo);
+      await mysql.query('userInsert', userInfo);
       await mysql.query('scoreInsert', { email });
     }
 
@@ -55,27 +55,6 @@ router.get('/kakao/signin', async (req, res) => {
     );
 
     res.send(jwtToken);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-router.post('/kakao/signout', async (req, res) => {
-  const token = req.headers.authorization;
-
-  try {
-    const result = await axios({
-      method: 'POST',
-      url: 'https://kapi.kakao.com/v1/user/logout',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const response = {
-      code: 201,
-      message: 'created',
-    };
-    res.send(response);
   } catch (error) {
     res.send(error);
   }
