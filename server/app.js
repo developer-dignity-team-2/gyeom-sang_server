@@ -9,6 +9,7 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 
+require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
@@ -164,17 +165,20 @@ app.post(
   }
 );
 
-app.post('/api/upload/image', imageUpload.single('file'), async (req, res) => {
-  const fileInfo = {
-    // product_id: parseInt(req.body.product_id, 10),
-    originalname: req.file.originalname,
-    mimetype: req.file.mimetype,
-    filename: req.file.filename,
-    path: req.file.path,
-  };
+app.post(
+  '/api/v1/upload/image',
+  imageUpload.single('file'),
+  async (req, res) => {
+    const fileInfo = {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      filename: req.file.filename,
+      path: req.file.path,
+    };
 
-  res.send(fileInfo);
-});
+    res.send(fileInfo);
+  }
+);
 
 app.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
