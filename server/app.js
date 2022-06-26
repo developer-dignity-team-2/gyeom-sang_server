@@ -189,6 +189,7 @@ app.post(
   imageUpload.single('file'),
   async (req, res) => {
     const fileInfo = {
+      //product_id: parseInt(req.body.product_id, 10),
       originalname: req.file.originalname,
       mimetype: req.file.mimetype,
       filename: req.file.filename,
