@@ -109,7 +109,8 @@ router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
     );
     const emailData = {
       from: 'meetbaabs@gmail.com', // 관리자
-      to: emailRequiredResult[0].host_email, // 밥장
+      to: 'meetbaabs@gmail.com',
+      // to: emailRequiredResult[0].host_email, // 밥장
       subject: '숟갈이 밥상을 신청했습니다.', // 이메일 제목
       html: h.join(''), // 이메일 내용
       // attachments: [
