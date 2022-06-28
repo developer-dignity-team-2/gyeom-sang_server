@@ -30,7 +30,7 @@ module.exports = {
   commentUpdate: `update comment set ? where id = ?`,
   commentDelete: `delete from comment where id = ?`,
   messageList: `select * from message`,
-  messageDetail: `select * from message where id = ?`,
+  messageDetail: `select t1.*, t2.* from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id where t1.id = ?`,
   messageInsert: `insert into message set ?`,
   messageUpdate: `update message set ? where id = ?`,
   messageDelete: `delete from message where id = ?`,
