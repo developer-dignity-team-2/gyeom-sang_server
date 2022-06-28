@@ -4,10 +4,17 @@ const router = express.Router();
 const mysql = require('../mysql');
 const nodemailer = require('../nodemailer');
 
-// 밥상 목록 가져오기
+// 밥상 목록 가져오기, 밥상 검색하기
 router.get('/', async (req, res) => {
   try {
-    const babsangList = await mysql.query('babsangList');
+    const { nameSearch } = req.query;
+    let babsangList;
+    if (nameSearch) {
+      babsangList = await mysql.query('babsangListSearch', `%${nameSearch}%`);
+    } else {
+      babsangList = await mysql.query('babsangList');
+    }
+    console.log(nameSearch);
     const response = {
       code: 200,
       message: 'ok',
