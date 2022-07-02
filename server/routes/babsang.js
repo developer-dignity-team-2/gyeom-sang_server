@@ -10,11 +10,13 @@ router.get('/', async (req, res) => {
     const { nameSearch } = req.query;
     let babsangList;
     if (nameSearch) {
-      babsangList = await mysql.query('babsangListSearch', `%${nameSearch}%`);
+      babsangList = await mysql.query('babsangListSearch', [
+        req.body.email,
+        `%${nameSearch}%`,
+      ]);
     } else {
-      babsangList = await mysql.query('babsangList');
+      babsangList = await mysql.query('babsangList', req.body.email);
     }
-    console.log(nameSearch);
     const response = {
       code: 200,
       message: 'ok',
