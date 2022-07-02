@@ -1,5 +1,5 @@
 module.exports = {
-  userDetail: `select * from user where email = ?`,
+  userDetail: `select t1.*, t2.dining_score from user t1 inner join user_question_score_aggregation t2 on t1.email = t2.email where t1.email = ?; `,
   userInsert: `insert into user set ?`,
   userAggregationDetail: `select * from user u inner join user_question_score_aggregation uqsa on u.email = uqsa.email where u.email = ?`,
   userUpdate: `update user set ? where email = ?`,
