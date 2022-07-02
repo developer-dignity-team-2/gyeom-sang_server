@@ -2,6 +2,10 @@ const express = require('express');
 const session = require('express-session');
 
 const app = express();
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+
+const httpServer = createServer(app);
 const fs = require('fs');
 const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
@@ -47,6 +51,21 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:8080',
+    methods: ['GET', 'POST'],
+  },
+});
+
+io.on('connection', (socket) => {
+  console.log('socket connected');
+
+  socket.on('disconnect', () => {
+    // socket 연결이 종료되었을 때
+  });
+});
 
 const generator = (time, index) => {
   if (!time) return 'file.log';
@@ -180,6 +199,6 @@ app.post(
   }
 );
 
-app.listen(3000, () => {
+httpServer.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
 });
