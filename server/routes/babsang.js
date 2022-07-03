@@ -8,14 +8,20 @@ const nodemailer = require('../nodemailer');
 router.get('/', async (req, res) => {
   try {
     const { nameSearch } = req.query;
+
     let babsangList;
+    // if (nameSearch) {
+    //   babsangList = await mysql.query('babsangListSearch', [
+    //     req.body.email,
+    //     `%${nameSearch}%`,
+    //   ]);
+    // } else {
+    //   babsangList = await mysql.query('babsangList', req.body.email);
+    // }
     if (nameSearch) {
-      babsangList = await mysql.query('babsangListSearch', [
-        req.body.email,
-        `%${nameSearch}%`,
-      ]);
+      babsangList = await mysql.query('babsangListSearch', `%${nameSearch}%`);
     } else {
-      babsangList = await mysql.query('babsangList', req.body.email);
+      babsangList = await mysql.query('babsangList');
     }
     const response = {
       code: 200,
