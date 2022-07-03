@@ -27,7 +27,7 @@ module.exports = {
   babsangBookmarkedList: `select t1.*, t2.active_yn from dining_table t1 inner join user_favorites t2 on t1.id = t2.dining_table_id where t2.user_email = ?`,
   babsangBookmarkInsert: `insert into user_favorites set ?`,
   babsangBookmarkUpdate: `update user_favorites set ? where user_email = ? and dining_table_id = ?`,
-  commentList: `select * from comment where dining_id = ?`,
+  commentList: `select t1.*, t2.nickname, t2.profile_image from comment t1 inner join user t2 on t1.user_email = t2.email where dining_id = ?`,
   commentInsert: `insert into comment set ?`,
   commentUpdate: `update comment set ? where id = ?`,
   commentDelete: `delete from comment where id = ?`,
