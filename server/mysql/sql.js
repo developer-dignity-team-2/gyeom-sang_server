@@ -32,16 +32,8 @@ module.exports = {
   commentUpdate: `update comment set ? where id = ?`,
   commentDelete: `delete from comment where id = ?`,
   messageList: `select t1.*, (select nickname from user where user.email = t1.sender_email) as sender_nickname, (select nickname from user where user.email = t1.receiver_email) as receiver_nickname, t2.restaurant_name, t2.restaurant_location from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id`,
-<<<<<<< HEAD
   messageDetail: `select t1.*, t2.*, t3.nickname from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t2.host_email = t3.email where t1.id = ?`,
   messageInsert: `insert into message set ?`,
   messageUpdate: `update message set ? where id = ?`,
   messageDelete: `delete from message where id = ?`,
-}
-=======
-  messageDetail: `select t1.id as message_id, t1.sender_email, t1.receiver_email, t1.message_type, t1.message_description, t1.create_date, t1.read_check, t2.*, t3.nickname from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t2.host_email = t3.email where t1.id = ?`,
-  messageInsert: `insert into message set ?`,
-  messageUpdate: `update message set ? where id = ?`,
-  messageDelete: `delete from message where id = ?`,
 };
->>>>>>> 2385414868d90e1d7bc612ebcf96f0883a9027a6
