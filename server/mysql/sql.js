@@ -8,6 +8,7 @@ module.exports = {
   scoreUpdate: `update user_question_score_aggregation set ? where email = ? `,
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
+  // babsangList: `select t1.*, t2.nickname, t2.profile_image, t3.active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email inner join user_favorites t3 on t1.id = t3.dining_table_id and t3.user_email = ?`,
   babsangList: `select t1.*, t2.nickname, t2.profile_image from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
   babsangListSearch: `select t1.*, t2.nickname, t2.profile_image from dining_table t1 inner join user t2 on t1.host_email = t2.email where t1.restaurant_name like ?`,
   babsangDetail: `select t1.*, t2.nickname, t2.age_range, t2.profile_image, t2.profile_description, t3.dining_score,
