@@ -2,9 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 const mysql = require('../mysql');
+const { auth } = require('../middleware/auth');
 
 // 메시지 목록 가져오기
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const messageList = await mysql.query('messageList');
     const response = {
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
 });
 
 // 메시지 상세정보 가져오기
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
     const messageDetail = await mysql.query('messageDetail', id);
@@ -35,7 +36,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // 메시지 생성하기
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const result = await mysql.query('messageInsert', req.body.param);
     const response = {
@@ -49,7 +50,7 @@ router.post('/', async (req, res) => {
 });
 
 // 메시지 수정하기
-router.put('/:id', (req, res) => {
+router.put('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('messageUpdate', [req.body.param, id]);
@@ -64,7 +65,7 @@ router.put('/:id', (req, res) => {
 });
 
 // 메시지 삭제하기
-router.delete('/:id', (req, res) => {
+router.delete('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('messageDelete', id);
