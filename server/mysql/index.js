@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
   connectionLimit: process.env.MYSQL_LIMIT,
-  timezone: "Asia/Seoul"
+  timezone: 'Asia/Seoul',
 });
 
 // 테이블 하나 대상

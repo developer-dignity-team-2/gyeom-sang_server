@@ -27,7 +27,7 @@ router.put('/', auth, (req, res) => {
     const { email } = req.decoded;
     const { param } = req.body;
 
-    const result = mysql.query('scoreUpdate', [param, email]);
+    mysql.query('scoreUpdate', [param, email]);
     const response = {
       code: 201,
       message: 'updated',

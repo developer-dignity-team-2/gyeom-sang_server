@@ -4,6 +4,8 @@ const router = express.Router();
 const mysql = require('../mysql');
 const nodemailer = require('../nodemailer');
 
+const { auth } = require('../middleware/auth');
+
 // 밥상 목록 가져오기, 밥상 검색하기
 router.get('/', async (req, res) => {
   try {
@@ -38,7 +40,7 @@ router.get('/', async (req, res) => {
 // 차려 놓은 밥상 목록 가져오기
 // 선정된 밥상 목록 가져오기
 // 찜한 밥상 목록 가져오기
-router.get('/get', async (req, res) => {
+router.get('/get', auth, async (req, res) => {
   try {
     const { type } = req.query;
     const babsangGetType = {
@@ -63,7 +65,7 @@ router.get('/get', async (req, res) => {
 });
 
 // 밥상 상세정보 가져오기
-router.get('/:id(\\d+)', async (req, res) => {
+router.get('/:id(\\d+)', auth, async (req, res) => {
   try {
     const { id } = req.params;
     const babsangDetail = await mysql.query('babsangDetail', [id, id]);
@@ -79,7 +81,7 @@ router.get('/:id(\\d+)', async (req, res) => {
 });
 
 // 밥상_숟갈 목록 가져오기
-router.get('/:id(\\d+)/babsangSpoons', async (req, res) => {
+router.get('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const babsangSpoonsList = await mysql.query('babsangSpoonsList');
     const response = {
@@ -94,7 +96,7 @@ router.get('/:id(\\d+)/babsangSpoons', async (req, res) => {
 });
 
 // 숟갈의 밥상 신청하기
-router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
+router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const { type } = req.query;
     const { id } = req.params;
@@ -144,7 +146,7 @@ router.post('/:id(\\d+)/babsangSpoons', async (req, res) => {
 // 숟갈의 밥상 취소하기
 // 밥장의 숟갈 선정하기
 // 밥장의 숟갈 취소하기
-router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
+router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const { type } = req.query;
     const babsangSpoonsType = {
@@ -215,7 +217,7 @@ router.put('/:id(\\d+)/babsangSpoons', async (req, res) => {
 });
 
 // 밥상 생성하기
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const result = await mysql.query('babsangInsert', req.body.param);
     const response = {
@@ -229,7 +231,7 @@ router.post('/', async (req, res) => {
 });
 
 // 밥상 수정하기
-router.put('/:id(\\d+)', (req, res) => {
+router.put('/:id(\\d+)', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('babsangUpdate', [req.body.param, id]);
@@ -244,7 +246,7 @@ router.put('/:id(\\d+)', (req, res) => {
 });
 
 // 밥상 삭제하기
-router.delete('/:id(\\d+)', (req, res) => {
+router.delete('/:id(\\d+)', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('babsangDelete', id);
@@ -260,7 +262,7 @@ router.delete('/:id(\\d+)', (req, res) => {
 
 <<<<<<< HEAD
 // 밥상 찜하기
-router.post('/bookmark', async (req, res) => {
+router.post('/bookmark', auth, async (req, res) => {
   try {
     const result = await mysql.query('babsangBookmarkInsert', req.body.param);
 =======
@@ -289,7 +291,7 @@ router.post('/', async (req, res) => {
 
 <<<<<<< HEAD
 // 밥상 찜 해제하기
-router.put('/bookmark', (req, res) => {
+router.put('/bookmark', auth, (req, res) => {
   try {
     const result = mysql.query('babsangBookmarkUpdate', [
       req.body.param,
