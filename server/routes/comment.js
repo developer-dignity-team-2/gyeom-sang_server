@@ -2,9 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 const mysql = require('../mysql');
+const { auth } = require('../middleware/auth');
 
 // 댓글 목록 가져오기
-router.get('/:babsangId', async (req, res) => {
+router.get('/:babsangId', auth, async (req, res) => {
   try {
     const { babsangId } = req.params;
     const commentList = await mysql.query('commentList', babsangId);
@@ -20,7 +21,7 @@ router.get('/:babsangId', async (req, res) => {
 });
 
 // 댓글 생성하기
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const result = await mysql.query('commentInsert', req.body.param);
     const response = {
@@ -34,7 +35,7 @@ router.post('/', async (req, res) => {
 });
 
 // 댓글 수정하기
-router.put('/:id', (req, res) => {
+router.put('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('commentUpdate', [req.body.param, id]);
@@ -49,7 +50,7 @@ router.put('/:id', (req, res) => {
 });
 
 // 댓글 삭제하기
-router.delete('/:id', (req, res) => {
+router.delete('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
     const result = mysql.query('commentDelete', id);
