@@ -65,7 +65,7 @@ router.get('/get', auth, async (req, res) => {
 });
 
 // 밥상 상세정보 가져오기
-router.get('/:id(\\d+)', async (req, res) => {
+router.get('/:id(\\d+)', auth, async (req, res) => {
   try {
     const { id } = req.params;
     const babsangDetail = await mysql.query('babsangDetail', [id, id]);
