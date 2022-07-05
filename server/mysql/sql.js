@@ -12,7 +12,7 @@ module.exports = {
   babsangListSearch: `select t1.*, t2.nickname, t2.profile_image from dining_table t1 inner join user t2 on t1.host_email = t2.email where t1.restaurant_name like ?`,
   babsangDetail: `select t1.*, t2.nickname, t2.age_range, t2.profile_image, t2.profile_description, t3.dining_score,
   (select count(*) from dining_table_spoons where dining_table_id = ?) as spoon_count from dining_table t1
-  inner join user t2 on t1.host_email = t2.email inner join user_question_score_aggregation t3 on t1.host_email = t3.email where id = ?`,
+  inner join user t2 on tx1.host_email = t2.email inner join user_question_score_aggregation t3 on t1.host_email = t3.email where id = ?`,
   babsangInsert: `insert into dining_table set ?`,
   babsangUpdate: `update dining_table set ? where id = ?`,
   babsangDelete: `delete from dining_table where id = ? `,
@@ -30,7 +30,7 @@ module.exports = {
   commentInsert: `insert into comment set ?`,
   commentUpdate: `update comment set ? where id = ?`,
   commentDelete: `delete from comment where id = ?`,
-  messageList: `select t1.*, (select nickname from user where user.email = t1.sender_email) as sender_nickname, (select nickname from user where user.email = t1.receiver_email) as receiver_nickname, t2.restaurant_name, t2.restaurant_location from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id`,
+  messageList: `select t1.*, (select nickname from user where user.email = t1.sender_email) as sender_nickname, (select nickname from user where user.email = t1.receiver_email) as receiver_nickname, t2.restaurant_name, t2.restaurant_location, t2.dining_status from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id`,
   messageDetail: `select t1.*, t2.*, t3.nickname from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t2.host_email = t3.email where t1.id = ?`,
   messageInsert: `insert into message set ?`,
   messageUpdate: `update message set ? where id = ?`,

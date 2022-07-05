@@ -8,6 +8,7 @@ const { auth } = require('../middleware/auth');
 router.get('/', auth, async (req, res) => {
   try {
     const { email } = req.decoded;
+    console.log(req.decoded);
 
     const scoreList = await mysql.query('scoreDetail', email);
     const response = {
