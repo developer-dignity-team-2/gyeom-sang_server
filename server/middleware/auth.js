@@ -4,7 +4,12 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const auth = (req, res, next) => {
   try {
+    if (!req.headers.authorization)
+      res.status(401).send({
+        message: '토큰이 없습니다.',
+      });
     const jwtToken = req.headers.authorization.split(' ')[1];
+
     req.decoded = jwt.verify(jwtToken, SECRET_KEY);
 
     return next();
