@@ -23,7 +23,11 @@ router.get('/:babsangId', auth, async (req, res) => {
 // 댓글 생성하기
 router.post('/', auth, async (req, res) => {
   try {
-    const result = await mysql.query('commentInsert', req.body.param);
+    const { email } = req.decoded;
+    const result = await mysql.query('commentInsert', {
+      ...req.body.param,
+      user_email: email,
+    });
     const response = {
       code: 201,
       message: 'created',
@@ -38,7 +42,8 @@ router.post('/', auth, async (req, res) => {
 router.put('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
-    const result = mysql.query('commentUpdate', [req.body.param, id]);
+    const { email } = req.decoded;
+    const result = mysql.query('commentUpdate', [req.body.param, id, email]);
     const response = {
       code: 201,
       message: 'updated',
@@ -53,7 +58,8 @@ router.put('/:id', auth, (req, res) => {
 router.delete('/:id', auth, (req, res) => {
   try {
     const { id } = req.params;
-    const result = mysql.query('commentDelete', id);
+    const { email } = req.decoded;
+    const result = mysql.query('commentDelete', [id, email]);
     const response = {
       code: 204,
       message: 'deleted',

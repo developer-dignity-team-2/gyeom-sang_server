@@ -10,16 +10,7 @@ const { auth } = require('../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const { nameSearch } = req.query;
-
     let babsangList;
-    // if (nameSearch) {
-    //   babsangList = await mysql.query('babsangListSearch', [
-    //     req.body.email,
-    //     `%${nameSearch}%`,
-    //   ]);
-    // } else {
-    //   babsangList = await mysql.query('babsangList', req.body.email);
-    // }
     if (nameSearch) {
       babsangList = await mysql.query('babsangListSearch', `%${nameSearch}%`);
     } else {
@@ -43,16 +34,14 @@ router.get('/', async (req, res) => {
 router.get('/get', auth, async (req, res) => {
   try {
     const { type } = req.query;
+    const { email } = req.decoded;
     const babsangGetType = {
       appliedList: 'babsangAppliedList',
       createdList: 'babsangCreatedList',
       selectedList: 'babsangSelectedList',
       bookmarkedList: 'babsangBookmarkedList',
     }[type];
-    const babsangGetTypeResult = await mysql.query(
-      babsangGetType,
-      req.body.email
-    );
+    const babsangGetTypeResult = await mysql.query(babsangGetType, email);
     const response = {
       code: 200,
       message: 'ok',
@@ -100,12 +89,14 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const { type } = req.query;
     const { id } = req.params;
+    const { email } = req.decoded;
     const babsangSpoonsType = {
       apply: 'babsangSpoonsInsert',
     }[type];
     const result = await mysql.query(babsangSpoonsType, {
       ...req.body.param,
       dining_table_id: id,
+      spoon_email: email,
     });
     const response = {
       code: 201,
@@ -113,7 +104,7 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
     };
 
     const emailRequiredResult = await mysql.query('babsangSpoonsListDetail', [
-      req.body.param.spoon_email,
+      email,
       id,
     ]);
 
@@ -149,6 +140,7 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
 router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const { type } = req.query;
+    const { email } = req.decoded;
     const babsangSpoonsType = {
       applyCancel: 'babsangSpoonsUpdate',
       pick: 'babsangSpoonsUpdate',
@@ -157,7 +149,7 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
     const { id } = req.params;
     const result = await mysql.query(babsangSpoonsType, [
       req.body.param,
-      req.body.spoon_email,
+      email,
       id,
     ]);
     const response = {
@@ -166,7 +158,7 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
     };
 
     const emailRequiredResult = await mysql.query('babsangSpoonsListDetail', [
-      req.body.spoon_email,
+      email,
       id,
     ]);
 
@@ -181,14 +173,14 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       h.push(
         `<span>축하합니다 ^O^ ${emailRequiredResult[0].spoon_nickname} 숟갈님은 ${emailRequiredResult[0].restaurant_name} 밥상의 숟갈로 선정되셨습니다.</span>`
       );
-      receiverEmail = req.body.spoon_email;
+      receiverEmail = email;
     } else if (type === 'pickCancel') {
       // 밥장의 숟갈 선정 취소 이메일을 숟갈에게 전송
       subject.push(`밥장이 숟갈 선정을 취소했습니다.`);
       h.push(
         `<span>${emailRequiredResult[0].spoon_nickname} 숟갈님은 ${emailRequiredResult[0].restaurant_name} 밥상의 숟갈 선정에 취소되셨습니다.</span>`
       );
-      receiverEmail = req.body.spoon_email;
+      receiverEmail = email;
     } else if (type === 'applyCancel') {
       subject.push(`숟갈이 밥상 신청을 취소했습니다.`);
       h.push(
@@ -219,7 +211,11 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
 // 밥상 생성하기
 router.post('/', auth, async (req, res) => {
   try {
-    const result = await mysql.query('babsangInsert', req.body.param);
+    const { email } = req.decoded;
+    const result = await mysql.query('babsangInsert', {
+      ...req.body.param,
+      host_email: email,
+    });
     const response = {
       code: 201,
       message: 'created',
@@ -234,7 +230,8 @@ router.post('/', auth, async (req, res) => {
 router.put('/:id(\\d+)', auth, (req, res) => {
   try {
     const { id } = req.params;
-    const result = mysql.query('babsangUpdate', [req.body.param, id]);
+    const { email } = req.decoded;
+    const result = mysql.query('babsangUpdate', [req.body.param, id, email]);
     const response = {
       code: 201,
       message: 'updated',
@@ -263,7 +260,11 @@ router.delete('/:id(\\d+)', auth, (req, res) => {
 // 밥상 찜하기
 router.post('/bookmark', auth, async (req, res) => {
   try {
-    const result = await mysql.query('babsangBookmarkInsert', req.body.param);
+    const { email } = req.decoded;
+    const result = await mysql.query('babsangBookmarkInsert', {
+      ...req.body.param,
+      user_email: email,
+    });
     const response = {
       code: 201,
       message: 'created',
@@ -277,9 +278,10 @@ router.post('/bookmark', auth, async (req, res) => {
 // 밥상 찜 해제하기
 router.put('/bookmark', auth, (req, res) => {
   try {
+    const { email } = req.decoded;
     const result = mysql.query('babsangBookmarkUpdate', [
       req.body.param,
-      req.body.user_email,
+      email,
       req.body.dining_table_id,
     ]);
     const response = {

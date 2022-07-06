@@ -7,7 +7,13 @@ const { auth } = require('../middleware/auth');
 // 메시지 목록 가져오기
 router.get('/', auth, async (req, res) => {
   try {
-    const messageList = await mysql.query('messageList');
+    const { email } = req.decoded;
+    const messageList = await mysql.query('messageList', [
+      email,
+      email,
+      email,
+      email,
+    ]);
     const response = {
       code: 200,
       message: 'ok',
@@ -38,7 +44,11 @@ router.get('/:id', auth, async (req, res) => {
 // 메시지 생성하기
 router.post('/', auth, async (req, res) => {
   try {
-    const result = await mysql.query('messageInsert', req.body.param);
+    const { email } = req.decoded;
+    const result = await mysql.query('messageInsert', {
+      ...req.body.param,
+      sender_email: email,
+    });
     const response = {
       code: 201,
       message: 'created',
