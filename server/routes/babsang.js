@@ -70,9 +70,9 @@ router.get('/:id(\\d+)', auth, async (req, res) => {
 });
 
 // 밥상_숟갈 목록 가져오기
-router.get('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
+router.get('/:id(\\d+)/babsangSpoons', async (req, res) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
     const babsangSpoonsList = await mysql.query('babsangSpoonsList', id);
     const response = {
       code: 200,
