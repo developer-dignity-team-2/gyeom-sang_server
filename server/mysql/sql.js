@@ -17,7 +17,7 @@ module.exports = {
   babsangInsert: `insert into dining_table set ?`,
   babsangUpdate: `update dining_table set ? where id = ? and host_email = ?`,
   babsangDelete: `delete from dining_table where id = ?`,
-  babsangSpoonsList: `select t1.*, t2.host_email from dining_table_spoons t1 inner join dining_table t2 on t1.dining_table_id = t2.id `,
+  babsangSpoonsList: `select t1.*, (select nickname from user u where t1.spoon_email = u.email) as spoon_nickname, t2.host_email, (select nickname from user u where u.email = t2.host_email) as host_nickname from dining_table_spoons t1 inner join dining_table t2 on t1.dining_table_id = t2.id where t1.dining_table_id = ?`,
   babsangSpoonsListDetail: `select t1.*, t2.host_email, t2.restaurant_name, t3.nickname as spoon_nickname from dining_table_spoons t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t1.spoon_email = t3.email where t1.spoon_email = ? and t1.dining_table_id = ? `,
   babsangSpoonsInsert: `insert into dining_table_spoons set ?`,
   babsangSpoonsUpdate: `update dining_table_spoons set ? where spoon_email = ? and dining_table_id = ?`,
