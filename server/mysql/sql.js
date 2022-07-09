@@ -30,7 +30,7 @@ module.exports = {
   commentInsert: `insert into comment set ?`,
   commentUpdate: `update comment set ? where id = ? and user_email = ?`,
   commentDelete: `delete from comment where id = ? and user_email = ?`,
-  messageList: `select t1.*, (select nickname from user where t1.sender_email = ?) as sender_nickname, (select nickname from user where t1.receiver_email = ?) as receiver_nickname, t2.restaurant_name, t2.restaurant_location, t2.dining_status from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id where sender_email = ? or receiver_email = ?`,
+  messageList: `select t1.*, (select u.nickname from user u where t1.sender_email = u.email) as sender_nickname, (select u.nickname from user u where t1.receiver_email = u.email) as receiver_nickname, t2.restaurant_name, t2.restaurant_location, t2.dining_status from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id where sender_email = ? or receiver_email = ?`,
   messageDetail: `select t1.*, t2.*, t3.nickname from message t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t2.host_email = t3.email where t1.id = ?`,
   messageInsert: `insert into message set ?`,
   messageUpdate: `update message set ? where id = ?`,
