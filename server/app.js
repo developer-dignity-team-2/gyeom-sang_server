@@ -52,6 +52,9 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Map or WeakMap
+const reviewWaitList = [];
+
 const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:8080',
@@ -60,7 +63,15 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', (socket) => {
-  console.log('socket connected');
+  socket.on('createBabsang', ({ email, createdTime }) => {
+    reviewWaitList.push({ email, createdTime });
+
+    console.log('get event from client');
+
+    setTimeout(() => {
+      socket.emit('alertReview', { message: 'review' });
+    }, 1000);
+  });
 
   socket.on('disconnect', () => {
     // socket 연결이 종료되었을 때
@@ -202,3 +213,5 @@ app.post(
 httpServer.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
 });
+
+module.exports = { httpServer };
