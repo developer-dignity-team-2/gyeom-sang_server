@@ -8,12 +8,7 @@ const { auth } = require('../middleware/auth');
 router.get('/', auth, async (req, res) => {
   try {
     const { email } = req.decoded;
-    const messageList = await mysql.query('messageList', [
-      email,
-      email,
-      email,
-      email,
-    ]);
+    const messageList = await mysql.query('messageList', [email, email]);
     const response = {
       code: 200,
       message: 'ok',
