@@ -1,5 +1,4 @@
 const express = require('express');
-const session = require('express-session');
 
 const app = express();
 const { createServer } = require('http');
@@ -12,6 +11,7 @@ const rfs = require('rotating-file-stream');
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
+const cron = require('node-cron');
 
 require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
@@ -34,26 +34,11 @@ app.use(
   })
 ); // 클라이언트 요청 body를 json으로 파싱 처리
 
-// const sess = {
-//   secret: 'secret key',
-//   resave: false, // 세션에 변경사항이 없어도 항상 다시 저장할지 여부
-//   saveUninitialized: true, // 초기화되지 않은 세션을 저장소에 강제로 저장할지 여부
-//   cookie: {
-//     httpOnly: true, // document.cookie 해도 쿠키 정보를 볼 수 없음
-//     secure: false, // https
-//     maxAge: 1000 * 60 * 60, // 쿠키가 유지되는 시간
-//   },
-// };
-// app.use(session(sess));
-
 const corsOptions = {
   origin: '*', // 허용할 도메인 설정
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-
-// Map or WeakMap
-const reviewWaitList = [];
 
 const io = new Server(httpServer, {
   cors: {
@@ -62,20 +47,39 @@ const io = new Server(httpServer, {
   },
 });
 
-io.on('connection', (socket) => {
-  socket.on('createBabsang', ({ email, createdTime }) => {
-    reviewWaitList.push({ email, createdTime });
+// 소켓을 통한 밥상매너점수 평가 전달
 
+// node-cron을 이용하여 주기적으로 체크하며 클라이언트에 socket 전달
+const reviewWaitList = [];
+const emitFunc = () => {
+  io.emit('alertReview');
+};
+io.on('connection', (socket) => {
+  socket.on('createBabsang', ({ email, ...info }) => {
     console.log('get event from client');
 
+    // 1시간 뒤에 처리
     setTimeout(() => {
-      socket.emit('alertReview', { message: 'review' });
-    }, 1000);
+      reviewWaitList.push({ email, emitFunc });
+      // socket.emit('alertReview', { message: 'review' });
+    }, 1000 * 60 * 60);
   });
 
   socket.on('disconnect', () => {
     // socket 연결이 종료되었을 때
   });
+});
+
+cron.schedule('* * * * *', () => {
+  if (reviewWaitList.length > 0) {
+    for (let i = 0; i < reviewWaitList.length; i += 1) {
+      if (reviewWaitList[i].email === '') {
+        console.log('이메일이 일치하면 전달');
+      }
+      io.emit('alertReview');
+      reviewWaitList.shift();
+    }
+  }
 });
 
 const generator = (time, index) => {
