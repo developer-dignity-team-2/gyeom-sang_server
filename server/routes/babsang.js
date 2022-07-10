@@ -140,7 +140,6 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
 router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
   try {
     const { type } = req.query;
-    const { email } = req.decoded;
     const babsangSpoonsType = {
       applyCancel: 'babsangSpoonsUpdate',
       pick: 'babsangSpoonsUpdate',
@@ -149,7 +148,7 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
     const { id } = req.params;
     const result = await mysql.query(babsangSpoonsType, [
       req.body.param,
-      email,
+      req.body.spoon_email,
       id,
     ]);
     const response = {
@@ -158,7 +157,7 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
     };
 
     const emailRequiredResult = await mysql.query('babsangSpoonsListDetail', [
-      email,
+      req.body.spoon_email,
       id,
     ]);
 
@@ -173,14 +172,14 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       h.push(
         `<span>축하합니다 ^O^ ${emailRequiredResult[0].spoon_nickname} 숟갈님은 ${emailRequiredResult[0].restaurant_name} 밥상의 숟갈로 선정되셨습니다.</span>`
       );
-      receiverEmail = email;
+      receiverEmail = emailRequiredResult[0].spoon_email;
     } else if (type === 'pickCancel') {
       // 밥장의 숟갈 선정 취소 이메일을 숟갈에게 전송
       subject.push(`밥장이 숟갈 선정을 취소했습니다.`);
       h.push(
         `<span>${emailRequiredResult[0].spoon_nickname} 숟갈님은 ${emailRequiredResult[0].restaurant_name} 밥상의 숟갈 선정에 취소되셨습니다.</span>`
       );
-      receiverEmail = email;
+      receiverEmail = emailRequiredResult[0].spoon_email;
     } else if (type === 'applyCancel') {
       subject.push(`숟갈이 밥상 신청을 취소했습니다.`);
       h.push(
