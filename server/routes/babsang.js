@@ -109,8 +109,6 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       id,
     ]);
 
-    res.send(response);
-
     // 숟갈의 밥상 신청 이메일을 밥장에게 전송
     const h = [];
     h.push(
@@ -129,6 +127,8 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       // ],
     };
     await nodemailer.send(emailData);
+
+    res.send(response);
   } catch (error) {
     res.send(error);
   }
@@ -160,8 +160,6 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       req.body.spoon_email,
       id,
     ]);
-
-    res.send(response);
 
     const subject = [];
     const h = [];
@@ -201,6 +199,8 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       // ],
     };
     await nodemailer.send(emailData);
+
+    res.send(response);
   } catch (error) {
     res.send(error);
   }
