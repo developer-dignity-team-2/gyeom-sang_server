@@ -9,7 +9,6 @@ const { auth } = require('../middleware/auth');
 // 밥상 목록 가져오기, 밥상 검색하기
 router.get('/', async (req, res) => {
   try {
-    const { email } = req.decoded;
     const { nameSearch } = req.query;
     let babsangList;
     if (nameSearch) {
@@ -21,7 +20,6 @@ router.get('/', async (req, res) => {
       code: 200,
       message: 'ok',
       result: babsangList,
-      email: email || '',
     };
     res.send(response);
   } catch (error) {
