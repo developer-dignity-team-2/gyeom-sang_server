@@ -12,7 +12,7 @@ const send = async (data) => {
   const transporter = nodemailer.createTransport(config);
   transporter.sendMail(data, (err, info) => {
     if (err) {
-      console.log(err);
+      throw new Error(err);
     }
     return info.response;
   });
