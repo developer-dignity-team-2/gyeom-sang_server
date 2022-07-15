@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
       code: 200,
       message: 'ok',
       result: babsangList,
-      email,
+      email: email || '',
     };
     res.send(response);
   } catch (error) {
