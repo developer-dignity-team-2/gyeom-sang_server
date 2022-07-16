@@ -12,12 +12,12 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 const cron = require('node-cron');
-const nodemailer = require('./nodemailer');
 
 require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
+const nodemailer = require('./nodemailer');
 const authRouter = require('./routes/auth');
 const questionRouter = require('./routes/question');
 const userRouter = require('./routes/user');
@@ -51,18 +51,24 @@ const io = new Server(httpServer, {
 const reviewWaitList = [];
 
 io.on('connection', (socket) => {
-  console.log(socket);
+  // console.log(socket);
 
-  socket.on('babsangCreate', ({ message }) => {
-    console.log(message);
+  socket.on('postSpoon', () => {
+    console.log('get postSpoon event from client ');
+    socket.emit('increment', { message: '밥상 신청인원 + 1' });
+  });
 
-    // message
-    socket.emit('increment', { message: 'increment' });
+  socket.on('babsangCreate', ({ babsangId }) => {
+    console.log(babsangId);
+
+    // 밥상 신청했을 때 바로 신청 인원 수 +1 해줄 수 있도록 이벤트 전달
+    // socket.emit('increment', { message: 'increment' });
 
     //  client의 babsangCreate 이벤트에서 밥상의 id, 밥장의 email을 같이 넘겨줘서 밥상에 참여한 모든 인원의 email을 구해야 함.
     // dining_table_spoons 테이블에서 밥상의 id와 같은 것중에 selected_yn 컬럼이 y인 로우의 숟갈 이메일(spoon_email)
     // 각각 구한 email에 모두 setTimeout으로 딜레이를 걸어서 nodemailer을 이용하여 메일 전송
 
+    // 현재 더미 데이터, 실제 밥상에 참여한 모든 사람의 이메일을 디비에 쿼리 날려서 구해와야 할 듯, async/await
     const TEMP_EMAIL_LIST = ['tmddhks0104@gmail.com', 'tmddhks0104@naver.com'];
 
     // setTimeout (ms), 1000 * 60 * 60 = 1hour
@@ -73,11 +79,13 @@ io.on('connection', (socket) => {
       console.log('setTimeout execute');
       const h = [];
       h.push(
-        `<span>${TEMP_EMAIL_LIST[0]} 숟갈님은 밥상매너평가 해주세요.</span>`
+        `<span>${TEMP_EMAIL_LIST[0]} 숟갈님은 밥상매너평가 해주세요.</span>
+         <span> http://localhost:8080/babsang-score${babsangId} </span> 
+        `
       );
       const emailData = {
         from: 'meetbaabs@gmail.com', // 관리자
-        to: TEMP_EMAIL_LIST[0].host_email, // 밥장
+        to: TEMP_EMAIL_LIST[0], // 밥장
         subject: '밥상매너평가 해주세요!', // 이메일 제목
         html: h.join(''), // 이메일 내용
         // attachments: [
@@ -89,6 +97,7 @@ io.on('connection', (socket) => {
       };
       nodemailer.send(emailData);
       // }, 1000 * 60 * 60);
+      console.log('mail sended');
     }, 1000 * 3);
   });
 
