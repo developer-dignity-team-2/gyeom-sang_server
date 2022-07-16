@@ -6,7 +6,7 @@ const auth = (req, res, next) => {
   try {
     if (!req.headers.authorization) {
       if (req.originalUrl === '/api/v1/babsang') {
-        req.decoded = { email: null };
+        req.decoded = { email: 'nothing' };
         return next();
       }
       res.status(401).send({
