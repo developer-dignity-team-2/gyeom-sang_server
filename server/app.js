@@ -12,6 +12,7 @@ const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
 const cron = require('node-cron');
+const nodemailer = require('./nodemailer');
 
 require('dotenv').config();
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
@@ -47,22 +48,62 @@ const io = new Server(httpServer, {
   },
 });
 
-// 소켓을 통한 밥상매너점수 평가 전달
-
-// node-cron을 이용하여 주기적으로 체크하며 클라이언트에 socket 전달
 const reviewWaitList = [];
-const emitFunc = () => {
-  io.emit('alertReview');
-};
-io.on('connection', (socket) => {
-  socket.on('createBabsang', ({ email, ...info }) => {
-    console.log('get event from client');
 
-    // 1시간 뒤에 처리
+io.on('connection', (socket) => {
+  console.log(socket);
+
+  socket.on('babsangCreate', ({ message }) => {
+    console.log(message);
+
+    // message
+    socket.emit('increment', { message: 'increment' });
+
+    //  client의 babsangCreate 이벤트에서 밥상의 id, 밥장의 email을 같이 넘겨줘서 밥상에 참여한 모든 인원의 email을 구해야 함.
+    // dining_table_spoons 테이블에서 밥상의 id와 같은 것중에 selected_yn 컬럼이 y인 로우의 숟갈 이메일(spoon_email)
+    // 각각 구한 email에 모두 setTimeout으로 딜레이를 걸어서 nodemailer을 이용하여 메일 전송
+
+    const TEMP_EMAIL_LIST = ['tmddhks0104@gmail.com', 'tmddhks0104@naver.com'];
+
+    // setTimeout (ms), 1000 * 60 * 60 = 1hour
     setTimeout(() => {
-      reviewWaitList.push({ email, emitFunc });
-      // socket.emit('alertReview', { message: 'review' });
-    }, 1000 * 60 * 60);
+      // nodemailer .
+      // 숟갈의 밥상 신청 이메일을 밥장에게 전송
+
+      console.log('setTimeout execute');
+      const h = [];
+      h.push(
+        `<span>${TEMP_EMAIL_LIST[0]} 숟갈님은 밥상매너평가 해주세요.</span>`
+      );
+      const emailData = {
+        from: 'meetbaabs@gmail.com', // 관리자
+        to: TEMP_EMAIL_LIST[0].host_email, // 밥장
+        subject: '밥상매너평가 해주세요!', // 이메일 제목
+        html: h.join(''), // 이메일 내용
+        // attachments: [
+        //   {
+        //     filename: '',
+        //     path: '../uploads/test.jpg',
+        //   },
+        // ],
+      };
+      nodemailer.send(emailData);
+      // }, 1000 * 60 * 60);
+    }, 1000 * 3);
+  });
+
+  // socket.on('createBabsang', ({ email, ...info }) => {
+  //   console.log('get event from client');
+
+  //   // 1시간 뒤에 처리
+  //   setTimeout(() => {
+  //     reviewWaitList.push({ email, emitFunc });
+  //     // socket.emit('alertReview', { message: 'review' })달
+  //   }, 1000 * 60 * 60);
+  // });
+
+  socket.on('test', () => {
+    console.log('get event from server');
   });
 
   socket.on('disconnect', () => {
@@ -70,17 +111,17 @@ io.on('connection', (socket) => {
   });
 });
 
-cron.schedule('* * * * *', () => {
-  if (reviewWaitList.length > 0) {
-    for (let i = 0; i < reviewWaitList.length; i += 1) {
-      if (reviewWaitList[i].email === '') {
-        console.log('이메일이 일치하면 전달');
-      }
-      io.emit('alertReview');
-      reviewWaitList.shift();
-    }
-  }
-});
+// cron.schedule('* * * * *', () => {
+//   if (reviewWaitList.length > 0) {
+//     for (let i = 0; i < reviewWaitList.length; i += 1) {
+//       if (reviewWaitList[i].email === '') {
+//         console.log('이메일이 일치하면 전달');
+//       }
+//       io.emit('alertReview');
+//       reviewWaitList.shift();
+//     }
+//   }
+// });
 
 const generator = (time, index) => {
   if (!time) return 'file.log';
@@ -140,35 +181,6 @@ app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/message', messageRouter);
 
-// app.post("/login", (req, res) => {
-//   const { email, pw } = req.body.param;
-//   // 데이터베이스에 사용자가 있는지, 비밀번호는 맞는지 체크
-
-//   req.session.email = email;
-//   req.session.isLogined = true;
-//   req.session.save((err) => {
-//     if (err) throw err;
-
-//     res.send(req.session);
-//   });
-// });
-
-// app.post("/logout", (req, res) => {
-//   if (req.session.email) {
-//     req.session.destroy();
-//     res.redirect("/login");
-//   }
-// });
-
-// app.all("*", (req, res, next) => {
-//   if (req.session.email) {
-//     console.log(req.cookies);
-//     next();
-//   } else {
-//     res.redirect("/login");
-//   }
-// });
-
 app.get('/api/file/:filename', (req, res) => {
   const file = `./uploads/${req.params.filename}`;
   try {
@@ -217,5 +229,3 @@ app.post(
 httpServer.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
 });
-
-module.exports = { httpServer };
