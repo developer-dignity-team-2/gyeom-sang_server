@@ -18,6 +18,19 @@ router.post('/kakao/signup', async (req, res) => {
       age_range: ageRange,
     } = req.body.param;
 
+    // const user = await axios({
+    //   method: 'GET',
+    //   url: 'https://kapi.kakao.com/v2/user/me',
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+
+    // const {
+    //   properties: { nickname, profile_image: profileImage },
+    //   kakao_account: { gender, email, age_range: ageRange },
+    // } = user.data;
+
     const userInfo = {
       email,
       gender: gender.slice(0, 1).toUpperCase(),
