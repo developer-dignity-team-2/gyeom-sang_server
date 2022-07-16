@@ -55,7 +55,12 @@ io.on('connection', (socket) => {
 
   socket.on('postSpoon', () => {
     console.log('get postSpoon event from client ');
-    socket.emit('increment', { message: '밥상 신청인원 + 1' });
+    socket.broadcast.emit('increment');
+  });
+
+  socket.on('cancelSpoon', () => {
+    console.log('get cancelSpoon event from client ');
+    socket.broadcast.emit('decrement');
   });
 
   socket.on('babsangCreate', ({ babsangId }) => {
