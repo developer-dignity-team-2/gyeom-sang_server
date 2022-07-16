@@ -9,7 +9,7 @@ const auth = (req, res, next) => {
         req.decoded = { email: 'nothing' };
         return next();
       }
-      res.status(401).send({
+      return res.status(401).send({
         message: '토큰이 없습니다.',
       });
     }
