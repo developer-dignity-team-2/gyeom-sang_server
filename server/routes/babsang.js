@@ -7,8 +7,9 @@ const nodemailer = require('../nodemailer');
 const { auth } = require('../middleware/auth');
 
 // 밥상 목록 가져오기, 밥상 검색하기
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
+    const { email } = req.decoded;
     const { nameSearch } = req.query;
     let babsangList;
     if (nameSearch) {
