@@ -8,8 +8,8 @@ module.exports = {
   scoreUpdate: `update user_question_score_aggregation set ? where email = ? `,
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
-  babsangList: `select t1.*, t2.nickname, t2.profile_image, IFNULL((select distinct uf.active_yn from user_favorites uf where uf.dining_table_id = t1.id and uf.user_email = ? order by create_date desc limit 1), 'N') as active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
-  babsangListSearch: `select t1.*, t2.nickname, t2.profile_image, IFNULL((select distinct uf.active_yn from user_favorites uf where uf.dining_table_id = t1.id and uf.user_email = ? order by create_date desc limit 1), 'N') as active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email where t1.restaurant_name like ?`,
+  babsangList: `select t1.*, t2.nickname, t2.profile_image, IFNULL((select uf.active_yn from user_favorites uf where uf.dining_table_id = t1.id and uf.user_email = ? order by create_date desc limit 1), 'N') as active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
+  babsangListSearch: `select t1.*, t2.nickname, t2.profile_image, IFNULL((select uf.active_yn from user_favorites uf where uf.dining_table_id = t1.id and uf.user_email = ? order by create_date desc limit 1), 'N') as active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email where t1.restaurant_name like ?`,
   babsangDetail: `select t1.*, t2.nickname, t2.age_range, t2.profile_image, t2.profile_description, t3.dining_score,
   (select count(*) from dining_table_spoons where dining_table_id = ?) as spoon_count from dining_table t1
   inner join user t2 on t1.host_email = t2.email inner join user_question_score_aggregation t3 on t1.host_email = t3.email where id = ?`,
