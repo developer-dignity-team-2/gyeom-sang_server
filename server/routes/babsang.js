@@ -296,4 +296,63 @@ router.put('/bookmark', auth, (req, res) => {
   }
 });
 
+// 밥상 생성 후 리뷰 알림 타이머 신청하기
+router.post('/review', auth, (req, res) => {
+  try {
+    const { email } = req.decoded;
+    const { babsangId, nickname, diningDatetime } = req.body.param;
+
+    console.log('babsangId = ', babsangId);
+    console.log('hostEmail = ', email);
+    console.log('밥장 닉네임 = ', nickname);
+    console.log('밥상 식사시간 = ', diningDatetime);
+
+    // const now = new Date();
+    // const myDate = new Date(diningDatetime);
+
+    // const diff = myDate.getTime() - now.getTime();
+    // diff + 3600000의 값이 실제로 식사매너평가 이메일이 날라가야 하는 시점
+    // const reviewTime = diff + 3600000;
+
+    setTimeout(async () => {
+      const res = await mysql.query('socketTest', babsangId);
+      if (res.length < 1) {
+        console.log('밥상에 신청한 사람이 없습니다');
+        return;
+      }
+
+      res.push({ spoon_email: email, nickname });
+      res.forEach((item) => {
+        const name = item.nickname;
+        const email = item.spoon_email;
+
+        console.log('setTimeout execute');
+        const h = [];
+        h.push(
+          `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
+       <span> http://localhost:8080/babsang-score/${babsangId} </span>
+      `
+        );
+        const emailData = {
+          from: 'meetbaabs@gmail.com', // 관리자
+          to: email, // 밥장
+          subject: '밥상매너평가 해주세요!', // 이메일 제목
+          html: h.join(''), // 이메일 내용
+        };
+        nodemailer.send(emailData);
+        // 1000 * 6 대신에 reviewTime 변수 사용
+      }, 1000 * 6);
+    });
+
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 module.exports = router;
