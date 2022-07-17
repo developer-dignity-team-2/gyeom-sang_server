@@ -341,7 +341,7 @@ router.post('/review', auth, (req, res) => {
         };
         nodemailer.send(emailData);
         // 1000 * 6 대신에 reviewTime 변수 사용
-      }, 1000 * 6);
+      }, 1000 * 30);
     });
 
     const response = {
