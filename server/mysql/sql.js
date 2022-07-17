@@ -5,7 +5,7 @@ module.exports = {
   userUpdate: `update user set ? where email = ?`,
   scoreInsert: `insert into user_question_score_aggregation set ?`,
   scoreDetail: `select * from user_question_score_aggregation where email = ?`,
-  scoreUpdate: `update user_question_score_aggregation set ? where email = ? `,
+  scoreUpdate: `update user_question_score_aggregation set ? where email = ?`,
   hostQuestionList: `select * from host_questions`,
   commonQuestionList: `select * from common_questions`,
   babsangList: `select t1.*, t2.nickname, t2.profile_image, IFNULL((select uf.active_yn from user_favorites uf where uf.dining_table_id = t1.id and uf.user_email = ? order by create_date desc limit 1), 'N') as active_yn from dining_table t1 inner join user t2 on t1.host_email = t2.email`,
