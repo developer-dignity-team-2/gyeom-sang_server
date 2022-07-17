@@ -24,8 +24,7 @@ router.get('/', auth, async (req, res) => {
 // 사용자 질문 및 점수 목록 수정하기
 router.put('/', auth, (req, res) => {
   try {
-    const { email } = req.decoded;
-    const { param } = req.body;
+    const { param, email } = req.body;
 
     mysql.query('scoreUpdate', [param, email]);
     const response = {
