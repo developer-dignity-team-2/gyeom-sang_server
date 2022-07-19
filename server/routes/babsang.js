@@ -45,7 +45,13 @@ router.get('/get', auth, async (req, res) => {
       selectedList: 'babsangSelectedList',
       bookmarkedList: 'babsangBookmarkedList',
     }[type];
-    const babsangGetTypeResult = await mysql.query(babsangGetType, email);
+    let data;
+    if (type === 'bookmarkedList') {
+      data = email;
+    } else {
+      data = [email, email];
+    }
+    const babsangGetTypeResult = await mysql.query(babsangGetType, data);
     const response = {
       code: 200,
       message: 'ok',
