@@ -7,9 +7,17 @@ const { auth } = require('../middleware/auth');
 // 사용자 질문 및 점수 목록 가져오기
 router.get('/', auth, async (req, res) => {
   try {
+    let data;
     const { email } = req.decoded;
+    const { extraEmail } = req.query;
 
-    const scoreList = await mysql.query('scoreDetail', email);
+    if (extraEmail) {
+      data = extraEmail;
+    } else {
+      data = email;
+    }
+
+    const scoreList = await mysql.query('scoreDetail', data);
     const response = {
       code: 200,
       message: 'ok',
