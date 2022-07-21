@@ -321,23 +321,32 @@ router.post('/review', auth, (req, res) => {
     // const reviewTime = diff + 3600000;
 
     setTimeout(async () => {
-      const res = await mysql.query('socketTest', babsangId);
+      const result = await mysql.query('socketTest', babsangId);
       if (res.length < 1) {
         console.log('밥상에 신청한 사람이 없습니다');
         return;
       }
 
+      // hameost_email, host_nickn
       res.push({ spoon_email: email, nickname });
-      res.forEach((item) => {
+
+      // query 시작 점
+      res.forEach(async (item) => {
         const name = item.nickname;
         const email = item.spoon_email;
+
+        const body = {
+          email,
+          dining_table_id: babsangId,
+        };
+
+        await mysql.query('reviewListInsert', body);
 
         console.log('setTimeout execute');
         const h = [];
         h.push(
           `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
-       <span> http://localhost:8080/babsang-score/${babsangId} </span>
-      `
+       <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
         );
         const emailData = {
           from: 'meetbaabs@gmail.com', // 관리자
@@ -355,6 +364,61 @@ router.post('/review', auth, (req, res) => {
       message: 'created',
     };
 
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.get('/review/list', auth, async (req, res) => {
+  try {
+    const { email } = req.decoded;
+
+    // select query문 작성
+    const result = await mysql.query('reviewList', email);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post('/review/list', auth, async (req, res) => {
+  try {
+    const res = await mysql.query('reviewListInsert', req.body.param);
+
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.put('/review/list', async (req, res) => {
+  const {
+    is_done: isDone,
+    email,
+    dining_table_id: diningTableId,
+  } = req.body.param;
+
+  try {
+    const res = await mysql.query('reviewListUpdate', [
+      { is_done: isDone },
+      email,
+      diningTableId,
+    ]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
     res.send(response);
   } catch (error) {
     res.send(error);

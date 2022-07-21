@@ -35,5 +35,8 @@ module.exports = {
   messageInsert: `insert into message set ?`,
   messageUpdate: `update message set ? where id = ?`,
   messageDelete: `delete from message where id = ?`,
+  reviewList: `select * from dining_table_review_list where email = ? and is_done = 'N';`,
+  reviewListInsert: `insert into dining_table_review_list set ?`,
+  reviewListUpdate: `update dining_table_review_list set ? where email = ? and dining_table_id = ?`,
   socketTest: `select  t2.spoon_email, t3.nickname from dining_table t1 inner join dining_table_spoons t2 on t1.id = t2.dining_table_id inner join user t3 on t2.spoon_email = t3.email where id = '?' and selected_yn = 'Y'`,
 };
