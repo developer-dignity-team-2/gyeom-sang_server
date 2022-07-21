@@ -321,7 +321,7 @@ router.post('/review', auth, (req, res) => {
     // const reviewTime = diff + 3600000;
 
     setTimeout(async () => {
-      const res = await mysql.query('socketTest', babsangId);
+      const result = await mysql.query('socketTest', babsangId);
       if (res.length < 1) {
         console.log('밥상에 신청한 사람이 없습니다');
         return;
@@ -370,15 +370,16 @@ router.post('/review', auth, (req, res) => {
   }
 });
 
-router.get('review/list', auth, async (req, res) => {
+router.get('/review/list', auth, async (req, res) => {
   try {
-    // select query문 작성
-    const res = await mysql.query('reviewList', req.decoded.email);
+    const { email } = req.decoded;
 
+    // select query문 작성
+    const result = await mysql.query('reviewList', email);
     const response = {
       code: 200,
       message: 'ok',
-      result: res,
+      result,
     };
     res.send(response);
   } catch (error) {
