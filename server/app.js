@@ -15,7 +15,9 @@ const rfs = require('rotating-file-stream');
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
+const dayjs = require('dayjs');
 
+const cron = require('node-cron');
 const mysql = require('./mysql');
 const nodemailer = require('./nodemailer');
 const authRouter = require('./routes/auth');
@@ -61,6 +63,25 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     // socket 연결이 종료되었을 때
   });
+});
+
+cron.schedule('* * * * *', async () => {
+  // 9시간 UTC , KST 변환필요
+  const now = dayjs().format('YY-MM-DD HH:mm:ss');
+  console.log(now);
+
+  const babsangList = await mysql.query('babsangEndList', now);
+  const param = {
+    dining_status: 1,
+  };
+
+  const updateBabsang = async (id) => {
+    await mysql.query('babsangCronUpdate', [param, id]);
+  };
+
+  for (let i = 0; i < babsangList.length; i += 1) {
+    updateBabsang(babsangList[i].id);
+  }
 });
 
 const generator = (time, index) => {
