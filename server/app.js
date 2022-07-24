@@ -67,9 +67,7 @@ io.on('connection', (socket) => {
 });
 
 cron.schedule('* * * * *', async () => {
-  // 9시간 UTC , KST 변환필요
   const now = dayjs().format('YY-MM-DD HH:mm:ss');
-  console.log(now);
 
   const babsangList = await mysql.query('babsangEndList', now);
   const param = {
