@@ -1,5 +1,10 @@
 const express = require('express');
+const dayjs = require('dayjs');
+const timezone = require('dayjs/plugin/timezone');
+const utc = require('dayjs/plugin/utc');
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const router = express.Router();
 const mysql = require('../mysql');
 const nodemailer = require('../nodemailer');
@@ -308,29 +313,16 @@ router.post('/review', auth, (req, res) => {
     const { email } = req.decoded;
     const { babsangId, nickname, diningDatetime } = req.body.param;
 
-    console.log('babsangId = ', babsangId);
-    console.log('hostEmail = ', email);
-    console.log('밥장 닉네임 = ', nickname);
-    console.log('밥상 식사시간 = ', diningDatetime);
-
-    // const now = new Date();
-    // const myDate = new Date(diningDatetime);
-
-    // const diff = myDate.getTime() - now.getTime();
-    // diff + 3600000의 값이 실제로 식사매너평가 이메일이 날라가야 하는 시점
-    // const reviewTime = diff + 3600000;
+    const reviewTime = dayjs() - dayjs(diningDatetime) + 3600000;
 
     setTimeout(async () => {
       const result = await mysql.query('socketTest', babsangId);
-      if (res.length < 1) {
-        console.log('밥상에 신청한 사람이 없습니다');
+      if (result.length < 1) {
         return;
       }
 
-      // hameost_email, host_nickn
       res.push({ spoon_email: email, nickname });
 
-      // query 시작 점
       res.forEach(async (item) => {
         const name = item.nickname;
         const email = item.spoon_email;
@@ -342,7 +334,6 @@ router.post('/review', auth, (req, res) => {
 
         await mysql.query('reviewListInsert', body);
 
-        console.log('setTimeout execute');
         const h = [];
         h.push(
           `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
@@ -356,7 +347,7 @@ router.post('/review', auth, (req, res) => {
         };
         nodemailer.send(emailData);
         // 1000 * 6 대신에 reviewTime 변수 사용
-      }, 1000 * 30);
+      }, reviewTime);
     });
 
     const response = {
