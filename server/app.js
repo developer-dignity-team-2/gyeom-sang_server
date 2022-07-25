@@ -4,7 +4,8 @@ const app = express();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
-require('dotenv').config();
+require('dotenv').config({ path: `middleware/.env` });
+require('dotenv').config({ path: `routes/.env` });
 require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
 require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
 
