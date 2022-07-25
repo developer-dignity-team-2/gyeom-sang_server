@@ -1,5 +1,6 @@
 module.exports = {
   userDetail: `select t1.*, t2.dining_score from user t1 inner join user_question_score_aggregation t2 on t1.email = t2.email where t1.email = ?; `,
+  userReview: `select review_active from user where email = ? and review_active = 'N';`,
   userInsert: `insert into user set ?`,
   userAggregationDetail: `select * from user u inner join user_question_score_aggregation uqsa on u.email = uqsa.email where u.email = ?`,
   userUpdate: `update user set ? where email = ?`,
@@ -40,5 +41,5 @@ module.exports = {
   reviewList: `select * from dining_table_review_list where email = ? and is_done = 'N';`,
   reviewListInsert: `insert into dining_table_review_list set ?`,
   reviewListUpdate: `update dining_table_review_list set ? where email = ? and dining_table_id = ?`,
-  socketTest: `select  t2.spoon_email, t3.nickname from dining_table t1 inner join dining_table_spoons t2 on t1.id = t2.dining_table_id inner join user t3 on t2.spoon_email = t3.email where id = '?' and selected_yn = 'Y'`,
+  babsangSelectedSpoonList: `select  t2.spoon_email, t3.nickname from dining_table t1 inner join dining_table_spoons t2 on t1.id = t2.dining_table_id inner join user t3 on t2.spoon_email = t3.email where id = '?' and selected_yn = 'Y'`,
 };
