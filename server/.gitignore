@@ -107,4 +107,5 @@ mysql/.env.test
 mysql/.env.prod
 nodemailer/.env.test
 nodemailer/.env.prod
-routes/env
+routes/.env
+middleware/.env
