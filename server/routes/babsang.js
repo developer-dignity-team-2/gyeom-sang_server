@@ -347,13 +347,13 @@ router.post('/review', auth, (req, res) => {
           `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
            <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
         );
-        const emailData = {
-          from: 'meetbaabs@gmail.com', // 관리자
-          to: email, // 밥장
-          subject: '밥상매너평가 해주세요!', // 이메일 제목
-          html: h.join(''), // 이메일 내용
-        };
-        nodemailer.send(emailData);
+        // const emailData = {
+        //   from: 'meetbaabs@gmail.com', // 관리자
+        //   to: email, // 밥장
+        //   subject: '밥상매너평가 해주세요!', // 이메일 제목
+        //   html: h.join(''), // 이메일 내용
+        // };
+        // nodemailer.send(emailData);
         // }, reviewTime);
       }, 30000);
     });
