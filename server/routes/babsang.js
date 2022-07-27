@@ -313,6 +313,8 @@ router.post('/review', auth, (req, res) => {
     const { email } = req.decoded;
     const { babsangId, nickname, diningDatetime } = req.body.param;
 
+    console.log(email, babsangId, nickname, diningDatetime);
+
     const reviewTime = dayjs() - dayjs(diningDatetime) + 3600000;
 
     setTimeout(async () => {
@@ -343,10 +345,10 @@ router.post('/review', auth, (req, res) => {
         await mysql.query('reviewListInsert', body);
 
         const h = [];
-        h.push(
-          `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
-           <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
-        );
+        // h.push(
+        //   `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
+        //    <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
+        // );
         // const emailData = {
         //   from: 'meetbaabs@gmail.com', // 관리자
         //   to: email, // 밥장
@@ -355,7 +357,7 @@ router.post('/review', auth, (req, res) => {
         // };
         // nodemailer.send(emailData);
         // }, reviewTime);
-      }, 30000);
+      }, 10000);
     });
 
     const response = {
