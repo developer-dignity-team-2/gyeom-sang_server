@@ -354,7 +354,8 @@ router.post('/review', auth, (req, res) => {
           html: h.join(''), // 이메일 내용
         };
         nodemailer.send(emailData);
-      }, reviewTime);
+        // }, reviewTime);
+      }, 30000);
     });
 
     const response = {
