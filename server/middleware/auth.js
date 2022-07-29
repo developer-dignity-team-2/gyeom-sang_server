@@ -31,7 +31,10 @@ const auth = (req, res, next) => {
     }
     // 토큰의 비밀키가 일치하지 않는 경우
     if (error.name === 'JsonWebTokenError') {
-      if (req.originalUrl === '/api/v1/babsang') {
+      if (
+        req.originalUrl === '/api/v1/babsang' ||
+        req.originalUrl.startsWith('/api/v1/babsang?nameSearch')
+      ) {
         req.decoded = { email: 'nothing' };
         return next();
       }
