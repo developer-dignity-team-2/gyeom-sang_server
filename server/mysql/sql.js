@@ -18,7 +18,7 @@ module.exports = {
   (select count(*) from dining_table_spoons where dining_table_id = ?) as spoon_count from dining_table t1
   inner join user t2 on t1.host_email = t2.email inner join user_question_score_aggregation t3 on t1.host_email = t3.email where id = ?`,
   babsangInsert: `insert into dining_table set ?`,
-  babsangUpdate: `update dining_table set ? where id = ? and host_email = ?`,
+  babsangUpdate: `update dining_table set ? where id = ?`,
   babsangCronUpdate: `update dining_table set ? where id = ?`,
   babsangDelete: `delete from dining_table where id = ?`,
   babsangSpoonsList: `select t1.*, t2.host_email, t3.gender as spoon_gender, t3.nickname as spoon_nickname, t3.profile_image as spoon_profile_image, t3.age_range as spoon_age_range, (select dining_score from user_question_score_aggregation as uqsa where uqsa.email = t1.spoon_email) as spoon_dining_score, (select nickname from user u where u.email = t2.host_email) as host_nickname from dining_table_spoons t1 inner join dining_table t2 on t1.dining_table_id = t2.id inner join user t3 on t1.spoon_email = t3.email where t1.dining_table_id = ?`,

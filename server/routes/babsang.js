@@ -243,8 +243,7 @@ router.post('/', auth, async (req, res) => {
 router.put('/:id(\\d+)', auth, (req, res) => {
   try {
     const { id } = req.params;
-    const { email } = req.decoded;
-    const result = mysql.query('babsangUpdate', [req.body.param, id, email]);
+    const result = mysql.query('babsangUpdate', [req.body.param, id]);
     const response = {
       code: 201,
       message: 'updated',
