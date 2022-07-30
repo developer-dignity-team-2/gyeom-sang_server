@@ -313,8 +313,6 @@ router.post('/review', auth, (req, res) => {
     const { email } = req.decoded;
     const { babsangId, nickname, diningDatetime } = req.body.param;
 
-    console.log(email, babsangId, nickname, diningDatetime);
-
     const reviewTime = dayjs(diningDatetime) - dayjs() + 60000;
 
     setTimeout(async () => {
