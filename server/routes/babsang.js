@@ -315,20 +315,16 @@ router.post('/review', auth, (req, res) => {
 
     console.log(email, babsangId, nickname, diningDatetime);
 
-    const reviewTime = dayjs(diningDatetime) -dayjs() + 60000;
+    const reviewTime = dayjs(diningDatetime) - dayjs() + 60000;
 
     setTimeout(async () => {
-			console.log('babsangId',babsangId);
       const result = await mysql.query('babsangSelectedSpoonList', babsangId);
-			console.log(result);
 
       if (result.length < 1) {
         return;
       }
-			console.log(1);
 
       result.push({ spoon_email: email, nickname });
-			console.log(2);
 
       result.forEach(async (item) => {
         const name = item.nickname;
@@ -338,7 +334,6 @@ router.post('/review', auth, (req, res) => {
           email,
           dining_table_id: babsangId,
         };
-				console.log(3);
 
         const reviewCheck = await mysql.query('userReview', email);
         if (reviewCheck.length > 0) {
@@ -363,7 +358,6 @@ router.post('/review', auth, (req, res) => {
         // };
         // nodemailer.send(emailData);
         // }, reviewTime);
-
       });
     }, reviewTime);
 
