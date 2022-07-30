@@ -312,38 +312,20 @@ router.post('/review', auth, (req, res) => {
   try {
     const { email } = req.decoded;
     const { babsangId, nickname, diningDatetime } = req.body.param;
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> 12464c5 ([CLEANING])
->>>>>>> develop
     const reviewTime = dayjs(diningDatetime) - dayjs() + 60000;
 
     setTimeout(async () => {
       const result = await mysql.query('babsangSelectedSpoonList', babsangId);
-<<<<<<< HEAD
       if (result.length < 1) {
         return;
       }
       result.push({ spoon_email: email, nickname });
-=======
-<<<<<<< HEAD
-
       if (result.length < 1) {
         return;
       }
 
       result.push({ spoon_email: email, nickname });
 
-=======
-      if (result.length < 1) {
-        return;
-      }
-      result.push({ spoon_email: email, nickname });
->>>>>>> 12464c5 ([CLEANING])
->>>>>>> develop
       result.forEach(async (item) => {
         const name = item.nickname;
         const email = item.spoon_email;
@@ -351,13 +333,6 @@ router.post('/review', auth, (req, res) => {
           email,
           dining_table_id: babsangId,
         };
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> 12464c5 ([CLEANING])
->>>>>>> develop
         const reviewCheck = await mysql.query('userReview', email);
         if (reviewCheck.length > 0) {
           const param = {
@@ -367,9 +342,6 @@ router.post('/review', auth, (req, res) => {
         }
         await mysql.query('reviewListInsert', body);
         const h = [];
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
         // h.push(
         //   `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
         //    <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
@@ -382,8 +354,6 @@ router.post('/review', auth, (req, res) => {
         // };
         // nodemailer.send(emailData);
         // }, reviewTime);
-=======
->>>>>>> develop
         h.push(
           `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
            <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
@@ -395,10 +365,6 @@ router.post('/review', auth, (req, res) => {
           html: h.join(''), // 이메일 내용
         };
         nodemailer.send(emailData);
-<<<<<<< HEAD
-=======
->>>>>>> 12464c5 ([CLEANING])
->>>>>>> develop
       });
     }, reviewTime);
 
