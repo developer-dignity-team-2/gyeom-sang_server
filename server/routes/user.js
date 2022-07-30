@@ -38,4 +38,21 @@ router.put('/', auth, async (req, res) => {
   }
 });
 
+// 사용자 계정 탈퇴하기
+router.delete('/', auth, async (req, res) => {
+  try {
+    const { email } = req.decoded;
+
+    await mysql.query('scoreDelete', email);
+    await mysql.query('userDelete', email);
+    const response = {
+      code: 204,
+      message: 'deleted',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 module.exports = router;

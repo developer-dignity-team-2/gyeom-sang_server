@@ -1,5 +1,10 @@
 const express = require('express');
+const dayjs = require('dayjs');
+const timezone = require('dayjs/plugin/timezone');
+const utc = require('dayjs/plugin/utc');
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const router = express.Router();
 const mysql = require('../mysql');
 const nodemailer = require('../nodemailer');
@@ -7,14 +12,18 @@ const nodemailer = require('../nodemailer');
 const { auth } = require('../middleware/auth');
 
 // 밥상 목록 가져오기, 밥상 검색하기
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
+    const { email } = req.decoded;
     const { nameSearch } = req.query;
     let babsangList;
     if (nameSearch) {
-      babsangList = await mysql.query('babsangListSearch', `%${nameSearch}%`);
+      babsangList = await mysql.query('babsangListSearch', [
+        email,
+        `%${nameSearch}%`,
+      ]);
     } else {
-      babsangList = await mysql.query('babsangList');
+      babsangList = await mysql.query('babsangList', email);
     }
     const response = {
       code: 200,
@@ -41,7 +50,13 @@ router.get('/get', auth, async (req, res) => {
       selectedList: 'babsangSelectedList',
       bookmarkedList: 'babsangBookmarkedList',
     }[type];
-    const babsangGetTypeResult = await mysql.query(babsangGetType, email);
+    let data;
+    if (type === 'bookmarkedList') {
+      data = email;
+    } else {
+      data = [email, email];
+    }
+    const babsangGetTypeResult = await mysql.query(babsangGetType, data);
     const response = {
       code: 200,
       message: 'ok',
@@ -109,8 +124,6 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       id,
     ]);
 
-    res.send(response);
-
     // 숟갈의 밥상 신청 이메일을 밥장에게 전송
     const h = [];
     h.push(
@@ -129,6 +142,8 @@ router.post('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       // ],
     };
     await nodemailer.send(emailData);
+
+    res.send(response);
   } catch (error) {
     res.send(error);
   }
@@ -160,8 +175,6 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       req.body.spoon_email,
       id,
     ]);
-
-    res.send(response);
 
     const subject = [];
     const h = [];
@@ -201,6 +214,8 @@ router.put('/:id(\\d+)/babsangSpoons', auth, async (req, res) => {
       // ],
     };
     await nodemailer.send(emailData);
+
+    res.send(response);
   } catch (error) {
     res.send(error);
   }
@@ -228,8 +243,7 @@ router.post('/', auth, async (req, res) => {
 router.put('/:id(\\d+)', auth, (req, res) => {
   try {
     const { id } = req.params;
-    const { email } = req.decoded;
-    const result = mysql.query('babsangUpdate', [req.body.param, id, email]);
+    const result = mysql.query('babsangUpdate', [req.body.param, id]);
     const response = {
       code: 201,
       message: 'updated',
@@ -282,6 +296,134 @@ router.put('/bookmark', auth, (req, res) => {
       email,
       req.body.dining_table_id,
     ]);
+    const response = {
+      code: 201,
+      message: 'updated',
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// 밥상 생성 후 리뷰 알림 타이머 신청하기
+router.post('/review', auth, (req, res) => {
+  try {
+    const { email } = req.decoded;
+    const { babsangId, nickname, diningDatetime } = req.body.param;
+    const reviewTime = dayjs(diningDatetime) - dayjs() + 60000;
+
+    setTimeout(async () => {
+      const result = await mysql.query('babsangSelectedSpoonList', babsangId);
+      if (result.length < 1) {
+        return;
+      }
+      result.push({ spoon_email: email, nickname });
+      if (result.length < 1) {
+        return;
+      }
+
+      result.push({ spoon_email: email, nickname });
+
+      result.forEach(async (item) => {
+        const name = item.nickname;
+        const email = item.spoon_email;
+        const body = {
+          email,
+          dining_table_id: babsangId,
+        };
+        const reviewCheck = await mysql.query('userReview', email);
+        if (reviewCheck.length > 0) {
+          const param = {
+            review_active: 'Y',
+          };
+          await mysql.query('userUpdate', [param, email]);
+        }
+        await mysql.query('reviewListInsert', body);
+        const h = [];
+        // h.push(
+        //   `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
+        //    <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
+        // );
+        // const emailData = {
+        //   from: 'meetbaabs@gmail.com', // 관리자
+        //   to: email, // 밥장
+        //   subject: '밥상매너평가 해주세요!', // 이메일 제목
+        //   html: h.join(''), // 이메일 내용
+        // };
+        // nodemailer.send(emailData);
+        // }, reviewTime);
+        h.push(
+          `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
+           <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
+        );
+        const emailData = {
+          from: 'meetbaabs@gmail.com', // 관리자
+          to: email, // 밥장
+          subject: '밥상매너평가 해주세요!', // 이메일 제목
+          html: h.join(''), // 이메일 내용
+        };
+        nodemailer.send(emailData);
+      });
+    }, reviewTime);
+
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.get('/review/list', auth, async (req, res) => {
+  try {
+    const { email } = req.decoded;
+
+    // select query문 작성
+    const result = await mysql.query('reviewList', email);
+    const response = {
+      code: 200,
+      message: 'ok',
+      result,
+    };
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.post('/review/list', auth, async (req, res) => {
+  try {
+    const res = await mysql.query('reviewListInsert', req.body.param);
+
+    const response = {
+      code: 201,
+      message: 'created',
+    };
+
+    res.send(response);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.put('/review/list', async (req, res) => {
+  const {
+    is_done: isDone,
+    email,
+    dining_table_id: diningTableId,
+  } = req.body.param;
+
+  try {
+    const result = await mysql.query('reviewListUpdate', [
+      { is_done: isDone },
+      email,
+      diningTableId,
+    ]);
+
     const response = {
       code: 201,
       message: 'updated',

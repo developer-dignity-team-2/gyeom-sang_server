@@ -4,6 +4,11 @@ const app = express();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 
+require('dotenv').config({ path: `middleware/.env` });
+require('dotenv').config({ path: `routes/.env` });
+require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
+require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
+
 const httpServer = createServer(app);
 const fs = require('fs');
 const morgan = require('morgan');
@@ -11,12 +16,11 @@ const rfs = require('rotating-file-stream');
 const path = require('path');
 const cors = require('cors');
 const multer = require('multer');
+const dayjs = require('dayjs');
+
 const cron = require('node-cron');
-
-require('dotenv').config();
-require('dotenv').config({ path: `mysql/.env.${app.get('env')}` });
-require('dotenv').config({ path: `nodemailer/.env.${app.get('env')}` });
-
+const mysql = require('./mysql');
+const nodemailer = require('./nodemailer');
 const authRouter = require('./routes/auth');
 const questionRouter = require('./routes/question');
 const userRouter = require('./routes/user');
@@ -42,27 +46,17 @@ app.use(cors(corsOptions));
 
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:8080',
-    methods: ['GET', 'POST'],
+    origin: '*',
   },
 });
 
-// 소켓을 통한 밥상매너점수 평가 전달
-
-// node-cron을 이용하여 주기적으로 체크하며 클라이언트에 socket 전달
-const reviewWaitList = [];
-const emitFunc = () => {
-  io.emit('alertReview');
-};
 io.on('connection', (socket) => {
-  socket.on('createBabsang', ({ email, ...info }) => {
-    console.log('get event from client');
+  socket.on('postSpoon', () => {
+    socket.broadcast.emit('increment');
+  });
 
-    // 1시간 뒤에 처리
-    setTimeout(() => {
-      reviewWaitList.push({ email, emitFunc });
-      // socket.emit('alertReview', { message: 'review' });
-    }, 1000 * 60 * 60);
+  socket.on('cancelSpoon', () => {
+    socket.broadcast.emit('decrement');
   });
 
   socket.on('disconnect', () => {
@@ -70,15 +64,20 @@ io.on('connection', (socket) => {
   });
 });
 
-cron.schedule('* * * * *', () => {
-  if (reviewWaitList.length > 0) {
-    for (let i = 0; i < reviewWaitList.length; i += 1) {
-      if (reviewWaitList[i].email === '') {
-        console.log('이메일이 일치하면 전달');
-      }
-      io.emit('alertReview');
-      reviewWaitList.shift();
-    }
+cron.schedule('* * * * *', async () => {
+  const now = dayjs().format('YY-MM-DD HH:mm:ss');
+
+  const babsangList = await mysql.query('babsangEndList', now);
+  const param = {
+    dining_status: 1,
+  };
+
+  const updateBabsang = async (id) => {
+    await mysql.query('babsangCronUpdate', [param, id]);
+  };
+
+  for (let i = 0; i < babsangList.length; i += 1) {
+    updateBabsang(babsangList[i].id);
   }
 });
 
@@ -140,35 +139,6 @@ app.use('/api/v1/babsang', babsangRouter);
 app.use('/api/v1/comment', commentRouter);
 app.use('/api/v1/message', messageRouter);
 
-// app.post("/login", (req, res) => {
-//   const { email, pw } = req.body.param;
-//   // 데이터베이스에 사용자가 있는지, 비밀번호는 맞는지 체크
-
-//   req.session.email = email;
-//   req.session.isLogined = true;
-//   req.session.save((err) => {
-//     if (err) throw err;
-
-//     res.send(req.session);
-//   });
-// });
-
-// app.post("/logout", (req, res) => {
-//   if (req.session.email) {
-//     req.session.destroy();
-//     res.redirect("/login");
-//   }
-// });
-
-// app.all("*", (req, res, next) => {
-//   if (req.session.email) {
-//     console.log(req.cookies);
-//     next();
-//   } else {
-//     res.redirect("/login");
-//   }
-// });
-
 app.get('/api/file/:filename', (req, res) => {
   const file = `./uploads/${req.params.filename}`;
   try {
@@ -178,7 +148,6 @@ app.get('/api/file/:filename', (req, res) => {
       res.send('요청한 파일이 존재하지 않습니다.');
     }
   } catch (e) {
-    console.log(e);
     res.send('파일을 다운로드 하는 중 에러가 발생했습니다.');
   }
 });
@@ -217,5 +186,3 @@ app.post(
 httpServer.listen(3000, () => {
   console.log('서버가 포트 3000번으로 시작되었습니다.');
 });
-
-module.exports = { httpServer };
