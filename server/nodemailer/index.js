@@ -1,4 +1,3 @@
-/*
 const nodemailer = require('nodemailer');
 
 const config = {
@@ -22,4 +21,3 @@ const send = async (data) => {
 module.exports = {
   send,
 };
-*/
