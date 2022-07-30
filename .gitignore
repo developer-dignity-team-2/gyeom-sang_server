@@ -1,2 +1,7 @@
 .DS_Store
 server/.DS_Store
+server/routes/env
+server/mysql/env.test
+server/mysql/env.prod
+server/routes/env
+server/routes/env
