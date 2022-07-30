@@ -52,12 +52,10 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
   socket.on('postSpoon', () => {
-    console.log('get postSpoon event from client ');
     socket.broadcast.emit('increment');
   });
 
   socket.on('cancelSpoon', () => {
-    console.log('get cancelSpoon event from client ');
     socket.broadcast.emit('decrement');
   });
 
@@ -150,7 +148,6 @@ app.get('/api/file/:filename', (req, res) => {
       res.send('요청한 파일이 존재하지 않습니다.');
     }
   } catch (e) {
-    console.log(e);
     res.send('파일을 다운로드 하는 중 에러가 발생했습니다.');
   }
 });

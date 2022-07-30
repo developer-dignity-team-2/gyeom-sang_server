@@ -312,34 +312,21 @@ router.post('/review', auth, (req, res) => {
   try {
     const { email } = req.decoded;
     const { babsangId, nickname, diningDatetime } = req.body.param;
-
-    console.log(email, babsangId, nickname, diningDatetime);
-
-    const reviewTime = dayjs(diningDatetime) -dayjs() + 60000;
+    const reviewTime = dayjs(diningDatetime) - dayjs() + 60000;
 
     setTimeout(async () => {
-			console.log('babsangId',babsangId);
       const result = await mysql.query('babsangSelectedSpoonList', babsangId);
-			console.log(result);
-
       if (result.length < 1) {
         return;
       }
-			console.log(1);
-
       result.push({ spoon_email: email, nickname });
-			console.log(2);
-
       result.forEach(async (item) => {
         const name = item.nickname;
         const email = item.spoon_email;
-
         const body = {
           email,
           dining_table_id: babsangId,
         };
-				console.log(3);
-
         const reviewCheck = await mysql.query('userReview', email);
         if (reviewCheck.length > 0) {
           const param = {
@@ -347,23 +334,19 @@ router.post('/review', auth, (req, res) => {
           };
           await mysql.query('userUpdate', [param, email]);
         }
-
         await mysql.query('reviewListInsert', body);
-
         const h = [];
-        // h.push(
-        //   `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
-        //    <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
-        // );
-        // const emailData = {
-        //   from: 'meetbaabs@gmail.com', // 관리자
-        //   to: email, // 밥장
-        //   subject: '밥상매너평가 해주세요!', // 이메일 제목
-        //   html: h.join(''), // 이메일 내용
-        // };
-        // nodemailer.send(emailData);
-        // }, reviewTime);
-
+        h.push(
+          `<span>${name} 숟갈님은 밥상매너평가 해주세요.</span>
+           <span><a href=http://localhost:8080>홈페이지로 이동</a></span>`
+        );
+        const emailData = {
+          from: 'meetbaabs@gmail.com', // 관리자
+          to: email, // 밥장
+          subject: '밥상매너평가 해주세요!', // 이메일 제목
+          html: h.join(''), // 이메일 내용
+        };
+        nodemailer.send(emailData);
       });
     }, reviewTime);
 
