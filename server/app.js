@@ -117,7 +117,10 @@ const imageStorage = multer.diskStorage({
   },
 });
 
-const imageUpload = multer({ storage: imageStorage });
+const imageUpload = multer({
+  storage: imageStorage,
+  limits: { fileSize: 3 * 1024 * 1024 },
+});
 
 const fileStorage = multer.diskStorage({
   destination(req, file, cb) {
